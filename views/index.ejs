@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Recccords</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>Recccords</h1>
+    <p>Welcome <%= username %></p>
+    <% if ( oauth ) { %> 
+      <a href="/auth">Authorize Discogs for Recccords</a>
+    <% } else { %>
+      <a href="/identity">Identity</a><br>
+      <a href="/user">User</a><br>
+      <a href="/collection">Collection</a><br>      
+      <a href="/wants">Wants</a><br>     
+      <% if ( saved ) { %>
+        <br> 
+        <a href="/save">Save Auth Credentials</a>
+      <% } %> 
+    <% } %>
+
+  </body>
+</html>
