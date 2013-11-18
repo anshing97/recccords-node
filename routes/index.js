@@ -11,16 +11,17 @@ var oa = new OAuth(
   "BCvgSeawxoZCPYqThnPV",
   "FxEPTHDkhtqGoZGHhrQDojwgyPIEhLGm",
   "1.0",
-  "http://localhost:3000/auth/callback",
+  "http://localhost:5000/auth/callback",
   "HMAC-SHA1"
 );
-
+	
 
 // index
 exports.index = function(req, res){
+	console.log("index user: " + req.session.user);
   if ( req.session.user ) {
-
-    // check if we need oauth 
+	console.log('user ouath ' + req.session.oauth);
+	// check if we need oauth 
     var need_oauth = true;
     if ( req.session.oauth ) {
       need_oauth = false; 
@@ -31,16 +32,25 @@ exports.index = function(req, res){
     if ( req.session.user.discogsToken && req.session.user.discogsSecret ) {
       need_oauth_save = false; 
     }
-
-    res.render('index', 
-      { username: req.session.user.username, 
+	res.send({ username: req.session.user.username, 
         oauth: need_oauth, 
         saved: need_oauth_save,
       }
     );
+    //res.render('index', 
+     // { username: req.session.user.username, 
+     //   oauth: need_oauth, 
+     //   saved: need_oauth_save,
+     // }
+    //);
 
   } else {
-    res.render('login');    
+    //res.render('login'); 
+    res.send({ username: '', 
+        oauth: true, 
+        saved: true,
+      }
+    );
   }
 
 };
@@ -60,11 +70,24 @@ exports.parse_login = function (request, response) {
         request.session.oauth = { access_token: user.get('discogsToken'), access_token_secret: user.get('discogsSecret') };        
       } 
 
-      response.redirect('/');  
+      //response.redirect('/');
+      response.send( 
+      {
+      	type: 'success',
+      	user: request.session.user,
+      	msg: 'user logged in.'
+      } 
+      );
     },
     error: function(user, error) {
       console.log('Error' + error.code + ' ' + error.message);
-      response.redirect('/login');
+      //response.redirect('/login');
+      response.send(
+      {
+      	type: 'fail',
+      	msg: error.code + ' ' + error.message
+      }  	
+    	);
     }
   });
 };
@@ -84,11 +107,20 @@ exports.parse_signup = function (request, response) {
   user.signUp(null, {
     success: function(user) {
       request.session.user = user; 
-      response.redirect('/');
+      response.send( 
+      {
+      	type: 'success',
+      	user: request.session.user,
+      	msg: 'user logged in.'
+      });
     },
     error: function(user, error) {
       console.log('Error: ' + error.code + ' ' + error.message);
-      response.redirect('/signup');
+      response.send(
+      {
+      	type: 'fail',
+      	msg: error.code + ' ' + error.message
+      });
     }
   });
 };
@@ -196,7 +228,7 @@ exports.collection = function (req, res) {
   if ( req.session.oauth ) {
     if ( req.session.access_username ) {
       oa.getProtectedResource(
-        "http://api.discogs.com/users/" + req.session.access_username + "/collection/folders", 
+        "http://api.discogs.com/users/" + req.session.access_username + "/collection/folders/0/releases", 
         "GET", 
         req.session.oauth.access_token, 
         req.session.oauth.access_token_secret,
@@ -214,7 +246,7 @@ exports.collection = function (req, res) {
           var feed = JSON.parse(data);
           req.session.access_username = feed['username'];
           oa.getProtectedResource(
-            "http://api.discogs.com/users/" + req.session.access_username + "/collection/folders", 
+            "http://api.discogs.com/users/" + req.session.access_username + "/collection/folders/0/releases", 
             "GET", 
             req.session.oauth.access_token, 
             req.session.oauth.access_token_secret,
