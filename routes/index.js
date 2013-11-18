@@ -11,7 +11,7 @@ var oa = new OAuth(
   "BCvgSeawxoZCPYqThnPV",
   "FxEPTHDkhtqGoZGHhrQDojwgyPIEhLGm",
   "1.0",
-  "http://localhost:5000/auth/callback",
+  "http://boiling-castle-5414.herokuapp.com/auth/callback",
   "HMAC-SHA1"
 );
 	

@@ -65,12 +65,11 @@ Ext.define('Recccords.controller.MyController', {
         var me = this;
 
         loginSuccess = function(result){
-            me.getCreateAccountResponse().setHtml("user logged in at: " +result.createdAt);
+            me.getCreateAccountResponse().setHtml("user created.");
             me.loggedInView = Ext.create('Recccords.view.LoggedInContainer', {
                 title: 'Welcome to Recccords'
             });
             //var model = getStore('
-            me.getSubContainer().removeAll(true,false);
             me.getSubContainer().push(me.loggedInView);
 
             // me.parseLogin(me.appkey,me.jskey,{username:me.username,password:me.password});
@@ -85,7 +84,7 @@ Ext.define('Recccords.controller.MyController', {
         }
         me.loginFailure = loginFailure;
         objectCreated = function(result){
-            me.getCreateAccountResponse().setHtml("user created at: " +result.createdAt);
+            me.getCreateAccountResponse().setHtml("user created.");
             me.parseLogin(me.username,me.password,me.loginSuccess,me.loginFailure);
         }
         objectCreatedError= function(result) {
@@ -119,12 +118,11 @@ Ext.define('Recccords.controller.MyController', {
 
 
         loginSuccess = function(result){
-            me.getLoginResponse().setHtml("user logged in at: " +result.user.createdAt);
+            me.getLoginResponse().setHtml("user logged in.");
             me.loggedInView = Ext.create('Recccords.view.LoggedInContainer', {
                 title: 'Welcome to Recccords'
             });
             //var model = getStore('
-            me.getSubContainer().removeAll(true,false);
             me.getSubContainer().push(me.loggedInView);
 
             // me.parseLogin(me.appkey,me.jskey,{username:me.username,password:me.password});
@@ -214,7 +212,7 @@ Ext.define('Recccords.controller.MyController', {
                     title: 'Welcome to Recccords'
                 });
                 //var model = getStore('
-                me.getSubContainer().removeAll(true,false);
+
                 me.getSubContainer().push(me.loggedInView);
             }
             else {
@@ -227,7 +225,6 @@ Ext.define('Recccords.controller.MyController', {
                     me.getReleaseList().setStore(store);
                     console.log('loaded count '+store.getCount());
                 });
-                me.getSubContainer().removeAll(true,false);
                 me.getSubContainer().push(me.releaseListView);
             }
             // me.parseLogin(me.appkey,me.jskey,{username:me.username,password:me.password});
