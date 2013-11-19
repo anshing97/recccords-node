@@ -5,6 +5,7 @@ var http = require('http');
 var path = require('path');
 
 var app = express();
+var oneDay = 86400000;
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -19,7 +20,7 @@ app.use(express.methodOverride());
 app.use(express.cookieParser('your secret here'));
 app.use(express.session());
 app.use(app.router);
-app.use(express.static(path.join(__dirname, 'public/recccords/')));
+app.use(express.static(path.join(__dirname, 'public/recccords/'),{ maxAge: oneDay }));
 
 // development only
 if ('development' == app.get('env')) {
