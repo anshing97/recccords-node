@@ -50,6 +50,7 @@ app.get('/identity',routes.identity);
 app.get('/user',routes.user);
 app.get('/collection',routes.collection);
 app.get('/wants',routes.wants);
+app.get('/folder/:id',routes.folder);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

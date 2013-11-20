@@ -193,17 +193,33 @@ exports.user = function (req, res) {
 };
 
 exports.collection = function (req, res) {
-  if ( req.session.oauth ) {
-    if ( req.session.access_username ) {
+
+  var render_folders = function (error, data, response) {        
+      var feed = JSON.parse(data);
+
+      var folder_array = [];
+
+      for ( var ii = 0; ii < feed['folders'].length; ii++ ) {
+        folder_array.push({ name: feed['folders'][ii]['name'], url:feed['folders'][ii]['resource_url'] });
+      }
+
+      req.session.folders = folder_array; 
+      res.render('folders',{username: req.session.user.username, folders:folder_array}); 
+  };
+
+  var discogs_get_folders = function () {
       oa.getProtectedResource(
         "http://api.discogs.com/users/" + req.session.access_username + "/collection/folders", 
         "GET", 
         req.session.oauth.access_token, 
         req.session.oauth.access_token_secret,
-        function (error, data, response) {        
-          var feed = JSON.parse(data);
-          res.send(feed); 
-      });
+        render_folders
+      );
+  };
+
+  if ( req.session.oauth ) {
+    if ( req.session.access_username ) {
+      discogs_get_folders();
     } else {
       oa.getProtectedResource(
         "http://api.discogs.com/oauth/identity", 
@@ -213,17 +229,9 @@ exports.collection = function (req, res) {
         function (error, data, response) {        
           var feed = JSON.parse(data);
           req.session.access_username = feed['username'];
-          oa.getProtectedResource(
-            "http://api.discogs.com/users/" + req.session.access_username + "/collection/folders", 
-            "GET", 
-            req.session.oauth.access_token, 
-            req.session.oauth.access_token_secret,
-            function (error, data, response) {        
-              var feed = JSON.parse(data);
-              res.send(feed); 
-          });
-      });
-
+          discogs_get_folders();
+        }
+      )
     }
   }
 };
@@ -242,3 +250,25 @@ exports.wants = function (req, res) {
     });
   }
 };
+
+exports.folders = function (req, res) {
+  // nothing to do here 
+}
+
+exports.folder = function (req,res) {
+
+  var folder_url = req.session.folders[req.params.id].url + '/releases';
+
+  console.log(folder_url);
+
+  // get the data url and use the oauth on that 
+  oa.getProtectedResource(
+    folder_url, 
+    "GET", 
+    req.session.oauth.access_token, 
+    req.session.oauth.access_token_secret,
+    function (error, data, response) {        
+      var feed = JSON.parse(data);
+      res.send(feed); 
+  });
+}
