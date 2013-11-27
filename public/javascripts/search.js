@@ -13,7 +13,7 @@ $(document).ready(function() {
     // show the results 
     $.getJSON(query,function(data){
       $.each(data.results,function(ii,result) {
-        $('#results').append('<li><img src="' + result.thumb + '"><p>' + result.title + ' | ' + result.year +  ' <a href="#" data-resource="' + result.resource_url + '"></a></p></li>')
+        $('#results').append('<li><img src="' + result.thumb + '"><p>' + result.title + ' | ' + result.year +  ' <a href="#" data-resource="' + result.resource_url + '">Add to Collection</a></p></li>')
         console.log(result);
       });
     })
