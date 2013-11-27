@@ -8,7 +8,7 @@ $(document).ready(function() {
     $('#results').empty();
 
     // form query string
-    var query = 'http://api.discogs.com/database/search?type=release&format=vinyl&title=' + encodeURIComponent($('input[name="search"]').val()); 
+    var query = 'http://api.discogs.com/database/search?type=release&format=vinyl&q=' + encodeURIComponent($('input[name="search"]').val()); 
 
     // show the results 
     $.getJSON(query,function(data){
@@ -29,6 +29,7 @@ $(document).ready(function() {
       var Record = Parse.Object.extend('Record');
       var record = new Record(); 
 
+      // save the relationship 
       var user_relation = record.relation('user'); 
       user_relation.add(Parse.User.current());
 
@@ -40,15 +41,19 @@ $(document).ready(function() {
       record.set('recordArtist',data.artists[0].name);
       record.set('recordYear',data.year);
 
-      record.save(null,{
-        success: function(record) {          
-          console.log("saved");
-        }, 
-        error: function(record, error) {
-          console.log("error");
-        }
-
-      })
+      // chain via promise 
+      record.save().then(function(record){
+        // add the records relationship for the user 
+        var user = Parse.User.current(); 
+        var records_relation = user.relation('records');
+        records_relation.add(record);
+        return user.save();        
+      }).then(function(user){
+        console.log("done saving user");
+      },function(error){
+        console.log("error saving " + error.message);
+      });
+      
     };
 
     var resource_url = $(this).data('resource');
