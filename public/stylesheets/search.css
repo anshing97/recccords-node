@@ -1,0 +1,19 @@
+#results li {
+  margin-bottom: 10px;
+  list-style-type: none;
+}
+
+#results li img {
+  margin-right: 10px;
+}
+
+#details {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0.8;
+  background-color: #000;
+  display: none;
+}

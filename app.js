@@ -16,8 +16,9 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.bodyParser());
 app.use(express.methodOverride());
-app.use(express.cookieParser('your secret here'));
+app.use(express.cookieParser('RECCCORDS'));
 app.use(express.session());
+// app.use(expressLayouts);
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -28,29 +29,12 @@ if ('development' == app.get('env')) {
 
 // start the app 
 app.get('/', routes.index);
-
-// login 
-app.get('/login', routes.login);
-app.post('/login', routes.parse_login);
-
-// sign up 
-app.get('/signup', routes.signup);
-app.post('/signup', routes.parse_signup);
-
-// save credentials 
-app.get('/save', routes.save);
-app.post('/save', routes.parse_save);
-
-// oauth 
-app.get('/auth',routes.oauth);
-app.get('/auth/callback',routes.oauth_callback); 
-
-// access the api 
-app.get('/identity',routes.identity);
-app.get('/user',routes.user);
 app.get('/collection',routes.collection);
 app.get('/wants',routes.wants);
-app.get('/folder/:id',routes.folder);
+app.get('/search',routes.search); 
+
+// user end points 
+app.use('/',require('./controllers/user'));
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

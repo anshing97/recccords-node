@@ -9,6 +9,7 @@
     "express": "~3.4.4",
     "ejs": "*", 
     "oauth": "~0.9.10",
-    "parse": "~1.2.8"  
+    "parse": "~1.2.8",
+    "express-ejs-layouts": "~0.3.1"
   }
 }
