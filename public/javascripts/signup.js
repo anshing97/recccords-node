@@ -1,30 +1,22 @@
 Parse.initialize('6Fj3b3fSBxz8k9mDWRHzl2uXmoSTqxleieQA4PL2','wRXCwtc1earGjrgLfdJk9dVwilt0udunXMB3BbcE');
 
-$(document).ready(function(){
-
-  // if not, show login page
-  $('#signup').submit(function(e){
-
-    // get the user name and password from the form 
-    var username = $(this).children('input[name="username"]').val(); 
-    var email    = $(this).children('input[name="email"]').val(); 
-    var password = $(this).children('input[name="password"]').val(); 
-
+parseSignUp = function(uname,password,email,objectCreatedCB, objectCreatedErrorCB){
     // log user in 
-    Parse.User.signUp(username,password, {
+    console.log("signup username " + uname + " " + password);
+    Parse.User.signUp(uname,password, {
       email: email
     }, { success: function(user) {
         $.post('/login',{userid: user.id},function(data){
           if ( data === "success" ) {
-            window.location = '/';
+            window.location = '/recccords/';
           }
         });
       },
       error: function(user, error) {
-        console.log('invalid login');
+        var result = new Object();
+        result.error = 'error #' + error.code + " : " + error.message;
+        objectCreatedErrorCB(result	);
       }
     });
    
-    e.preventDefault();
-  });
-});
+};
