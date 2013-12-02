@@ -5,6 +5,7 @@ $(document).ready(function() {
   // find all records for this user 
   var query = new Parse.Query('Record');
   query.equalTo("user", Parse.User.current());
+  query.descending('createdAt');
 
   var collection = query.collection(); 
 
