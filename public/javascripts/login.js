@@ -4,7 +4,7 @@ Parse.initialize('6Fj3b3fSBxz8k9mDWRHzl2uXmoSTqxleieQA4PL2','wRXCwtc1earGjrgLfdJ
 
   // if not, show login page
  // $('#login').submit(function(e){
-parseLogin = function(username, email, password, objectCreatedCB, objectCreatedErrorCB){
+parseLogin = function(username, password, objectCreatedCB, objectCreatedErrorCB){
    console.log('parselogin username ' + username + ' pw ' + password);
     // log user in 
     Parse.User.logIn(username,password, {
@@ -17,7 +17,7 @@ parseLogin = function(username, email, password, objectCreatedCB, objectCreatedE
       },
       error: function(user, error) {
         console.log('invalid login');
-        var result;
+        var result = new Object();
         result.error = 'invalid login';
         objectCreatedErrorCB(result	);
       }

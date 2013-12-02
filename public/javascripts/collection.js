@@ -1,7 +1,6 @@
 Parse.initialize("6Fj3b3fSBxz8k9mDWRHzl2uXmoSTqxleieQA4PL2", "wRXCwtc1earGjrgLfdJk9dVwilt0udunXMB3BbcE");
 
-$(document).ready(function() {
-
+function getCollection(successCB,failCB){
   // find all records for this user 
   var query = new Parse.Query('Record');
   query.equalTo("user", Parse.User.current());
@@ -10,21 +9,21 @@ $(document).ready(function() {
 
   collection.fetch({
     success: function(records) {
-      records.each(function(record){
-
-        var name   = record.get('recordName');
-        var label  = record.get('recordLabel');
-        var artist = record.get('recordArtist');
-        var year = record.get('recordYear');
-
-        $('#records').append('<li>' + name + ' | ' + artist + ' | ' + label + ' | ' + year + '</li>');
-
+    	var rcrds = new Array();
+     records.each(function(record){
+		var rcrd = new Object();
+		rcrd.recordName = record.get('recordName');
+        rcrd.recordLabel = record.get('recordLabel');
+        rcrd.recordArtist = record.get('recordArtist');
+        rcrd.recordYear = record.get('recordYear');
+		rcrds.push(rcrd);
       });
-
+    	successCB(rcrds);
     },
     error: function(records, error) {
-      console.log("error");
+      var result = new Object();
+      result.error = "error";
+      failCB(result);
     }
-
   });
-});
+};

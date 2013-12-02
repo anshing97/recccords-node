@@ -1,6 +1,0 @@
-{
-    "webBuild": {
-        "environment": "testing",
-        "publishPath": "/Users/admin/recccords-node/public/recccords"
-    }
-}
