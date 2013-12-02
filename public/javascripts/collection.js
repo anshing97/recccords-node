@@ -16,8 +16,9 @@ $(document).ready(function() {
         var label  = record.get('recordLabel');
         var artist = record.get('recordArtist');
         var year = record.get('recordYear');
+        var thumb = record.get('recordThumb');
 
-        $('#records').append('<li>' + name + ' | ' + artist + ' | ' + label + ' | ' + year + '</li>');
+        $('#records').append('<li><img src="' + thumb + '">' + name + ' | ' + artist + ' | ' + label + ' | ' + year + '</li>');
 
       });
 

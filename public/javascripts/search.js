@@ -33,9 +33,12 @@ $(document).ready(function() {
       var user_relation = record.relation('user'); 
       user_relation.add(Parse.User.current());
 
+      console.log('data');
+      console.log(data);
+
       record.set('discogsId',data.id);
       record.set('discogsURL',data.resource_url);
-      record.set('image',data.images[0].resource_url);
+      record.set('recordThumb',data.thumb);
       record.set('recordName',data.title);
       record.set('recordLabel',data.labels[0].name);
       record.set('recordArtist',data.artists[0].name);

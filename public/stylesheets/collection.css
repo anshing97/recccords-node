@@ -1,0 +1,9 @@
+#records li {
+  margin-bottom: 10px;
+  list-style-type: none;
+}
+
+#records li img {
+  margin-right: 10px;
+}
+
