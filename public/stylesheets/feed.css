@@ -1,0 +1,9 @@
+#feed li {
+  margin-bottom: 10px;
+  list-style-type: none;
+}
+
+#feed li img {
+  margin-right: 10px;
+}
+

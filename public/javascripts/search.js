@@ -30,12 +30,7 @@ $(document).ready(function() {
       var record = new Record(); 
 
       // save the relationship 
-      var user_relation = record.relation('user'); 
-      user_relation.add(Parse.User.current());
-
-      console.log('data');
-      console.log(data);
-
+      record.set('user',Parse.User.current());
       record.set('discogsId',data.id);
       record.set('discogsURL',data.resource_url);
       record.set('recordThumb',data.thumb);
@@ -45,16 +40,13 @@ $(document).ready(function() {
       record.set('recordYear',data.year);
 
       // chain via promise 
-      record.save().then(function(record){
-        // add the records relationship for the user 
-        var user = Parse.User.current(); 
-        var records_relation = user.relation('records');
-        records_relation.add(record);
-        return user.save();        
-      }).then(function(user){
-        console.log("done saving user");
-      },function(error){
-        console.log("error saving " + error.message);
+      record.save(null,{
+        success:function(record) {
+          console.log("save succeess");
+        }, 
+        error:function(record,error) {
+          console.log("save error");
+        }
       });
       
     };

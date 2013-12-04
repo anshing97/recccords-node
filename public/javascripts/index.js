@@ -8,13 +8,10 @@ $(document).ready(function() {
     $('.user').show();
     $('.userless').hide(); 
     $('#greeting').html('Hello ' + user.get('username') + ' ');    
-      console.log(user.get('records'));
-
   } else {
     $('.user').hide();
     $('.userless').show(); 
   }
-
 
   $('#logout').click(function(e){
     Parse.User.logOut();

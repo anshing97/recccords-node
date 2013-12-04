@@ -27,3 +27,6 @@ exports.wants = function (req, res) {
   res.render('wants');
 };
 
+exports.feed = function (req, res) {
+  res.render('feed');
+};

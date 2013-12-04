@@ -1,6 +1,10 @@
 #records li {
-  margin-bottom: 10px;
+  margin-bottom: 25px;
   list-style-type: none;
+}
+
+#records li p {
+  text-align: left;
 }
 
 #records li img {
