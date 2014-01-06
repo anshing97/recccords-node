@@ -3,24 +3,38 @@ Parse.initialize("6Fj3b3fSBxz8k9mDWRHzl2uXmoSTqxleieQA4PL2", "wRXCwtc1earGjrgLfd
 $(document).ready(function() {
 
   // find all records for this user 
-  var query = new Parse.Query('Record');
+  var query = new Parse.Query('RecordActivity');
+
+  // looking for collection activity
+  query.contains('activityType','addCollection');
   query.descending('createdAt');
-  // include user so we can get the username 
-  query.include('user');
+
+  // include user and record in our data 
+  query.include('fromUser');
+  query.include('record');
 
   var collection = query.collection(); 
 
   collection.fetch({
-    success: function(records) {
-      records.each(function(record){
+    success: function(activities) {
 
+      console.log(activities);
+
+      activities.each(function(activity){
+
+        // record information 
+        var record = activity.get('record');        
         var title   = record.get('recordName');
         var artist = record.get('recordArtist');
         var thumb = record.get('recordThumb');
-        var user = record.get('user');
-        var times_ago = moment(record.createdAt).fromNow();
 
-        $('#feed').append('<li><img src="' + thumb + '">' + user.get('username') + ' added - ' + title + ' by ' + artist + ' ' + times_ago + '</li>');
+        // when it was added to collection 
+        var times_ago = moment(activity.createdAt).fromNow();
+
+        // user information
+        var username = activity.get('fromUser').get('username');
+
+        $('#feed').append('<li><img src="' + thumb + '">' + username + ' added - ' + title + ' by ' + artist + ' ' + times_ago + '</li>');
 
       });
 
