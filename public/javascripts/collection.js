@@ -3,15 +3,23 @@ Parse.initialize("6Fj3b3fSBxz8k9mDWRHzl2uXmoSTqxleieQA4PL2", "wRXCwtc1earGjrgLfd
 $(document).ready(function() {
 
   // find all records for this user 
-  var query = new Parse.Query('Record');
-  query.equalTo("user", Parse.User.current());
+  var query = new Parse.Query('RecordActivity');
+
+  // looking for add to collection activity for this user
+  query.contains('activityType','addCollection');
+  query.equalTo('fromUser', Parse.User.current());  
   query.descending('createdAt');
+
+  // include the record object
+  query.include('record');
 
   var collection = query.collection(); 
 
   collection.fetch({
-    success: function(records) {
-      records.each(function(record){
+    success: function(activities) {
+      activities.each(function(activity){
+
+        var record = activity.get('record');
 
         var name   = record.get('recordName');
         var label  = record.get('recordLabel');

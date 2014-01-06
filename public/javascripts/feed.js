@@ -9,7 +9,7 @@ $(document).ready(function() {
   query.contains('activityType','addCollection');
   query.descending('createdAt');
 
-  // include user and record in our data 
+  // include user and record in our query
   query.include('fromUser');
   query.include('record');
 
@@ -17,8 +17,6 @@ $(document).ready(function() {
 
   collection.fetch({
     success: function(activities) {
-
-      console.log(activities);
 
       activities.each(function(activity){
 
