@@ -26,6 +26,7 @@ $(document).ready(function() {
           addedToCollectionQuery.matchesQuery('record',recordQuery);
           addedToCollectionQuery.include('fromUser');
 
+          // append user that has this record in their collection
           addedToCollectionQuery.find({
             success:function(results){
               for ( var ii = 0; ii < results.length; ii++ ) {
@@ -40,7 +41,7 @@ $(document).ready(function() {
           });
         };
 
-        $('#results').append('<li data-id=' +  result.id + '><img src="' + result.thumb + '"><p>' + result.title + ' | ' + result.year +  ' <a href="#" data-resource="' + result.resource_url + '">Add to Collection</a></p></li>');
+        $('#results').append('<li data-id=' +  result.id + '><a href="#" class="showRecord" data-resource="' + result.resource_url + '"><img src="' + result.thumb + '"></a><p>' + result.title + ' | ' + result.year +  ' <a href="#" class="addCollection" data-resource="' + result.resource_url + '">Add to Collection</a></p></li>');
 
         findUsersWithRecords(result);
 
@@ -50,15 +51,22 @@ $(document).ready(function() {
     e.preventDefault(); 
   });
 
-  $('#results').on('click','a',function(e){
+  $('#results').on('click','a#addCollection',function(e){
 
     var addToCollection = function ( data ) {
+
+      // add to collection 
+      // 1) fetch for the record   
+      // 2) create or fetch the record and send result to 3 
+      // 3) create a record activity with 'addCollection'
 
       var query = new Parse.Query('Record');
       query.equalTo('discogsId',data.id); 
 
+      // 1) 
       query.first().then(function(record){
 
+        // 2) 
         if ( record ) {
           return record.fetch(); 
         } else {
@@ -78,6 +86,7 @@ $(document).ready(function() {
         }
       }).then(function(record){
 
+        // 3) 
         var RecordActivity = Parse.Object.extend('RecordActivity');
 
         var new_activity = new RecordActivity(); 
@@ -104,4 +113,14 @@ $(document).ready(function() {
     return false;
   })
 
+  $('#results').on('click','a#showRecord',function(e){
+
+    var resource_url = $(this).data('resource');
+
+    $.getJSON(resource_url,function(data){
+      console.log('show resource');
+      console.log(data);
+    });
+    return false; 
+  }
 });
