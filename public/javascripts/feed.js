@@ -6,7 +6,7 @@ $(document).ready(function() {
   var query = new Parse.Query('RecordActivity');
 
   // looking for collection activity
-  query.contains('activityType','addCollection');
+  query.equalTo('activityType','addCollection');
   query.descending('createdAt');
 
   // include user and record in our query

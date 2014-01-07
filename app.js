@@ -18,7 +18,6 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.cookieParser('RECCCORDS'));
 app.use(express.session());
-// app.use(expressLayouts);
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
