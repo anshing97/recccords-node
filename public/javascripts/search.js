@@ -30,7 +30,7 @@ $(document).ready(function() {
             success:function(results){
               for ( var ii = 0; ii < results.length; ii++ ) {
                 var user = results[ii].get('fromUser');
-                $('li[data-id="' + result.id + '"]').append(user.get('username'));
+                $('li[data-id="' + result.id + '"] p').append(' | ' + user.get('username'));
               }
             },
             error:function(error){
