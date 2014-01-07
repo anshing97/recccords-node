@@ -111,7 +111,7 @@ $(document).ready(function() {
     });
 
     return false;
-  })
+  });
 
   $('#results').on('click','a.showRecord',function(e){
 
