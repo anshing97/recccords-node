@@ -122,5 +122,5 @@ $(document).ready(function() {
       console.log(data);
     });
     return false; 
-  }
+  });
 });
