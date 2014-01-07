@@ -51,7 +51,7 @@ $(document).ready(function() {
     e.preventDefault(); 
   });
 
-  $('#results').on('click','a#addCollection',function(e){
+  $('#results').on('click','a.addCollection',function(e){
 
     var addToCollection = function ( data ) {
 
@@ -113,4 +113,14 @@ $(document).ready(function() {
     return false;
   })
 
+  $('#results').on('click','a.showRecord',function(e){
+
+    var resource_url = $(this).data('resource');
+
+    $.getJSON(resource_url,function(data){
+      console.log('show resource');
+      console.log(data);
+    });
+    return false; 
+  });
 });
