@@ -27,7 +27,7 @@ $(document).ready(function() {
         var year = record.get('recordYear');
         var thumb = record.get('recordThumb');
 
-        $('#records').append('<li><img src="' + thumb + '">' + name + ' | ' + artist + ' | ' + label + ' | ' + year + '</li>');
+        $('#records').append('<li><a href="record/' + record.get('discogsId') + '"><img src="' + thumb + '"></a>' + name + ' | ' + artist + ' | ' + label + ' | ' + year + '</li>');
 
       });
 

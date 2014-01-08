@@ -32,7 +32,7 @@ $(document).ready(function() {
         // user information
         var username = activity.get('fromUser').get('username');
 
-        $('#feed').append('<li><img src="' + thumb + '">' + username + ' added - ' + title + ' by ' + artist + ' ' + times_ago + '</li>');
+        $('#feed').append('<li><a href="record/' + record.get('discogsId') + '"><img src="' + thumb + '"></a>' + username + ' added - ' + title + ' by ' + artist + ' ' + times_ago + '</li>');
 
       });
 

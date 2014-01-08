@@ -41,7 +41,7 @@ $(document).ready(function() {
           });
         };
 
-        $('#results').append('<li data-id=' +  result.id + '><a href="#" class="showRecord" data-resource="' + result.resource_url + '"><img src="' + result.thumb + '"></a><p>' + result.title + ' | ' + result.year +  ' <a href="#" class="addCollection" data-resource="' + result.resource_url + '">Add to Collection</a></p></li>');
+        $('#results').append('<li data-id=' +  result.id + '><a href="record/' + result.id + '"><img src="' + result.thumb + '"></a><p>' + result.title + ' | ' + result.year +  ' <a href="#" class="addCollection" data-resource="' + result.resource_url + '">Add to Collection</a></p></li>');
 
         findUsersWithRecords(result);
 
