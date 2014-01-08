@@ -5,7 +5,7 @@ $(document).ready(function() {
   var params = window.location.pathname.split('/');
   var discogsId = params[params.length - 1];
 
-  var query = 'http://api.discogs.com/releases/' + discogsId; 
+  var query = 'http://api.discogs.com/releases/' + discogsId + '?callback=?'; 
 
   $.getJSON(query,function(data){
     console.log(results);
