@@ -32,6 +32,7 @@ app.get('/collection',routes.collection);
 app.get('/wants',routes.wants);
 app.get('/search',routes.search); 
 app.get('/feed',routes.feed); 
+app.get('/record/:discogsid',routes.record);
 
 // user end points 
 app.use('/',require('./controllers/user'));

@@ -30,3 +30,7 @@ exports.wants = function (req, res) {
 exports.feed = function (req, res) {
   res.render('feed');
 };
+
+exports.record = function (req, res) {
+  res.render('record');
+}
