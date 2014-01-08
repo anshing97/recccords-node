@@ -7,7 +7,7 @@ $(document).ready(function() {
 
   var query = 'http://api.discogs.com/releases/' + discogsId + '?callback=?'; 
 
-  $.getJSON(query,function(data){
+  $.getJSON(query,function(results){
     console.log(results);
 
     var data = results.data; 
