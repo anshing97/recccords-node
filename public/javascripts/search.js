@@ -71,7 +71,7 @@ $(document).ready(function() {
         processData: false,
         beforeSend: function(jqXHR) {    
             jqXHR.setRequestHeader("Content-Type", "text/plain"); 
-        }
+        },
         data : {
           'discogsData': results
         },
