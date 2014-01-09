@@ -68,7 +68,7 @@ $(document).ready(function() {
         'year': results.year
       };
 
-      Parse.Cloud.run('addToCollection', data, {
+      Parse.Cloud.run('addRecordToCollection', data, {
         success: function(result) {
           console.log('success');
           console.log(result);
