@@ -1,3 +1,7 @@
+PARSE_APP_ID   = '6Fj3b3fSBxz8k9mDWRHzl2uXmoSTqxleieQA4PL2';
+PARSE_CLIENT_KEY = 'wG3l0Im8wG9yjtWJmyzFElV1SyeihYW3QJzdoEyh';
+PARSE_REST_KEY = 'Z2FdTJK2AS31zVmjMUkBHHp9YFwvF6jno2aAYHik';
+
 Parse.initialize("6Fj3b3fSBxz8k9mDWRHzl2uXmoSTqxleieQA4PL2", "wRXCwtc1earGjrgLfdJk9dVwilt0udunXMB3BbcE");
 
 $(document).ready(function() {
@@ -53,61 +57,34 @@ $(document).ready(function() {
 
   $('#results').on('click','a.addCollection',function(e){
 
-    var addToCollection = function ( data ) {
+    var addToCollection = function ( results ) {
 
-      // add to collection 
-      // 1) fetch for the record   
-      // 2) create or fetch the record and send result to 3 
-      // 3) create a record activity with 'addCollection'
-
-      var query = new Parse.Query('Record');
-      query.equalTo('discogsId',data.id); 
-
-      // 1) 
-      query.first().then(function(record){
-
-        // 2) 
-        if ( record ) {
-          return record.fetch(); 
-        } else {
-          var Record = Parse.Object.extend('Record');
-          var new_record = new Record(); 
-
-          // save the relationship 
-          new_record.set('discogsId',data.id);
-          new_record.set('discogsURL',data.resource_url);
-          new_record.set('recordThumb',data.thumb);
-          new_record.set('recordName',data.title);
-          new_record.set('recordLabel',data.labels[0].name);
-          new_record.set('recordArtist',data.artists[0].name);
-          new_record.set('recordYear',data.year);
-
-          return new_record.save(); 
+      $.ajax({
+        headers : {
+          "X-Parse-Application-Id" : PARSE_APP_ID,
+          "X-Parse-REST-API-Key" : PARSE_REST_KEY,
+          "X-Parse-Session-Token" :  Parse.User.current()._sessionToken
+        },
+        type : "POST",
+        url : "https://api.parse.com/1/addToCollection",
+        contentType : "application/json",
+        data : {
+          'discogsData': results
+        },
+        success: function (resp) {
+          console.log(resp);
+        }, 
+        error: function (error) {
+          console.log(error);
         }
-      }).then(function(record){
-
-        // 3) 
-        var RecordActivity = Parse.Object.extend('RecordActivity');
-
-        var new_activity = new RecordActivity(); 
-
-        new_activity.set('fromUser',Parse.User.current());
-        new_activity.set('activityType','addCollection');
-        new_activity.set('record',record);
-
-        return new_activity.save(); 
-      }).then(function(activity){
-        // nothing to do on success
-      },function(error){
-        // error, log it 
-        console.log(error);
+     
       });
-    }
+    };
 
     var resource_url = $(this).data('resource');
 
-    $.getJSON(resource_url,function(data){
-      addToCollection(data);
+    $.getJSON(resource_url,function(results){
+      addToCollection(results);
     });
 
     return false;
