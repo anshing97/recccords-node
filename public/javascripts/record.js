@@ -2,6 +2,8 @@ Parse.initialize("6Fj3b3fSBxz8k9mDWRHzl2uXmoSTqxleieQA4PL2", "wRXCwtc1earGjrgLfd
 
 $(document).ready(function() {
 
+  console.log('starting');
+
   var params = window.location.pathname.split('/');
   var discogsId = params[params.length - 1];
 
@@ -38,23 +40,21 @@ $(document).ready(function() {
       addedToCollectionQuery.matchesQuery('record',recordQuery);
       addedToCollectionQuery.include('fromUser');
 
-      addedToCollectionQuery.find({
-        success:function(results){
+      addedToCollectionQuery.find().then(function(results){
 
-          if ( results.length === 0 ) {
-            $('#social').hide(); 
-          } else {
-            for ( var ii = 0; ii < results.length; ii++ ) {
-              var user = results[ii].get('fromUser');
-              $('#people').append('<li>' +  user.get('username') + '</li>');
-            }
-          }
+        console.log('results');
+        console.log(results);
 
-        },
-        error:function(error){
-          console.log('error');
-          console.log(error);
-        }
+        var users = $.map(results,function(activity) {
+          console.log(activity);
+          return activity.get('fromUser');
+        });
+
+        console.log('users is ');
+        console.log(users);
+      },function(error){
+        console.log('error');
+        console.log(error);
       });
     };
 
