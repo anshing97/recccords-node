@@ -36,6 +36,9 @@ $(document).ready(function() {
       recordQuery.equalTo('discogsId',discogsid);
 
       var addedToCollectionQuery = new Parse.Query('RecordActivity');
+
+      // exclude self 
+      addedToCollectionQuery.notEqualTo('fromUser',Parse.User.current());      
       addedToCollectionQuery.equalTo('activityType','addCollection');
       addedToCollectionQuery.matchesQuery('record',recordQuery);
       addedToCollectionQuery.include('fromUser');
