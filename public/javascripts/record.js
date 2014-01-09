@@ -2,8 +2,6 @@ Parse.initialize("6Fj3b3fSBxz8k9mDWRHzl2uXmoSTqxleieQA4PL2", "wRXCwtc1earGjrgLfd
 
 $(document).ready(function() {
 
-  console.log('starting');
-
   var params = window.location.pathname.split('/');
   var discogsId = params[params.length - 1];
 
@@ -30,37 +28,17 @@ $(document).ready(function() {
       $tracks.append('<li>' + track.position + ' | ' + track.title + '| ' + track.duration + '</li>')
     }
 
-    var findRecordPeople = function ( discogsid ) {
 
-      var recordQuery = new Parse.Query('Record');
-      recordQuery.equalTo('discogsId',discogsid);
-
-      var addedToCollectionQuery = new Parse.Query('RecordActivity');
-
-      // exclude self 
-      addedToCollectionQuery.notEqualTo('fromUser',Parse.User.current());      
-      addedToCollectionQuery.equalTo('activityType','addCollection');
-      addedToCollectionQuery.matchesQuery('record',recordQuery);
-      addedToCollectionQuery.include('fromUser');
-
-      addedToCollectionQuery.find().then(function(results){
-
-        console.log('results');
-        console.log(results);
-
-        var users = $.map(results,function(activity) {
-          console.log(activity);
-          return activity.get('fromUser');
-        });
-
-        console.log('users is ');
-        console.log(users);
-      },function(error){
-        console.log('error');
+    Parse.Cloud.run('hasRecordInCollection', { 'discogsId': data.id }, {
+      success: function(result) {
+        console.log('success');
+        console.log(result);
+      },
+      error: function(error) {
+        console.log('errror');
         console.log(error);
-      });
-    };
-
-    findRecordPeople(data.id);
+      }
+    });
+    
   }); 
 });
