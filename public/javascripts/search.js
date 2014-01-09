@@ -1,10 +1,7 @@
-PARSE_APP_ID   = '6Fj3b3fSBxz8k9mDWRHzl2uXmoSTqxleieQA4PL2';
-PARSE_CLIENT_KEY = 'wG3l0Im8wG9yjtWJmyzFElV1SyeihYW3QJzdoEyh';
-PARSE_REST_KEY = 'Z2FdTJK2AS31zVmjMUkBHHp9YFwvF6jno2aAYHik';
-
 Parse.initialize("6Fj3b3fSBxz8k9mDWRHzl2uXmoSTqxleieQA4PL2", "wRXCwtc1earGjrgLfdJk9dVwilt0udunXMB3BbcE");
 
 $(document).ready(function() {
+
 
   $('#search').submit(function(e){
 
@@ -57,51 +54,34 @@ $(document).ready(function() {
 
   $('#results').on('click','a.addCollection',function(e){
 
-    var addToCollection = function ( results ) {
-
-      $.ajax({
-        headers : {
-          "X-Parse-Application-Id" : PARSE_APP_ID,
-          "X-Parse-REST-API-Key" : PARSE_REST_KEY,
-          "X-Parse-Session-Token" :  Parse.User.current()._sessionToken
-        },
-        type : "POST",        
-        url : "https://api.parse.com/1/functions/addToCollection",        
-        crossDomain: true,
-        processData: false,
-        beforeSend: function(jqXHR) {    
-            jqXHR.setRequestHeader("Content-Type", "text/plain"); 
-        },
-        data : {
-          'discogsData': results
-        },
-        success: function (resp) {
-          console.log(resp);
-        }, 
-        error: function (error) {
-          console.log(error);
-        }
-     
-      });
-    };
-
     var resource_url = $(this).data('resource');
 
     $.getJSON(resource_url,function(results){
-      addToCollection(results);
+
+      var data = {
+        'discogsId': results.id,
+        'resource_url': results.resource_url,
+        'thumb': results.thumb, 
+        'title': results.title,
+        'label': results.labels[0].name,  
+        'artist': results.artists[0].name,  
+        'year': results.year
+      };
+
+      Parse.Cloud.run('addToCollection', data, {
+        success: function(result) {
+          console.log('success');
+          console.log(result);
+        },
+        error: function(error) {
+          console.log('errror');
+          console.log(error);
+        }
+      });
     });
 
     return false;
   });
 
-  $('#results').on('click','a.showRecord',function(e){
-
-    var resource_url = $(this).data('resource');
-
-    $.getJSON(resource_url,function(data){
-      console.log('show resource');
-      console.log(data);
-    });
-    return false; 
-  });
+  
 });
