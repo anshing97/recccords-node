@@ -29,16 +29,16 @@ $(document).ready(function() {
     }
 
 
-    Parse.Cloud.run('hasRecordInCollection', { 'discogsId': data.id }, {
-      success: function(result) {
-        console.log('success');
-        console.log(result);
+   Parse.Cloud.run('usersWithRecordInCollection', { 'discogsId': data.id }, {
+      success: function(users) {
+        for ( var ii = 0; ii < users.length; ii++ ) {
+          $('#people').append('<li>' +  users[ii].get('username') + '</li>');
+        }
       },
       error: function(error) {
         console.log('errror');
         console.log(error);
       }
     });
-    
   }); 
 });
