@@ -32,14 +32,12 @@ $(document).ready(function() {
    Parse.Cloud.run('usersWithRecordInCollection', { 'discogsId': data.id }, {
       success: function(users) {
 
-        var $people = $('#people');
-
         if ( users.length > 0 ) {
           for ( var ii = 0; ii < users.length; ii++ ) {
-            $people.append('<li>' +  users[ii].get('username') + '</li>');
+            $('#people').append('<li>' +  users[ii].get('username') + '</li>');
           }
         } else {
-          $people.hide();
+          $('#social').hide();
         }
 
       },
