@@ -65,9 +65,13 @@ $(document).ready(function() {
           "X-Parse-REST-API-Key" : PARSE_REST_KEY,
           "X-Parse-Session-Token" :  Parse.User.current()._sessionToken
         },
-        type : "POST",
-        url : "https://api.parse.com/1/addToCollection",
-        contentType : "application/json",
+        type : "POST",        
+        url : "https://api.parse.com/1/addToCollection",        
+        crossDomain: true,
+        processData: false,
+        beforeSend: function(jqXHR) {    
+            jqXHR.setRequestHeader("Content-Type", "text/plain"); 
+        }
         data : {
           'discogsData': results
         },
