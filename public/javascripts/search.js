@@ -66,7 +66,7 @@ $(document).ready(function() {
           "X-Parse-Session-Token" :  Parse.User.current()._sessionToken
         },
         type : "POST",        
-        url : "https://api.parse.com/1/addToCollection",        
+        url : "https://api.parse.com/1/functions/addToCollection",        
         crossDomain: true,
         processData: false,
         beforeSend: function(jqXHR) {    
