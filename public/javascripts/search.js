@@ -26,9 +26,11 @@ $(document).ready(function() {
       });
 
       Parse.Cloud.run('usersWithRecordInCollectionList',{ 'records':recordsList },{
-        success:function(users){
-          $.each(users,function(ii,user) {
-            $('li[data-id="' + recordsList[ii].discogsId + '"] p').append(' | ' + user.get('username'));
+        success:function(records){
+          $.each(records,function(ii,users) {
+            $.each(users,function(jj,user) {
+              $('li[data-id="' + recordsList[ii].discogsId + '"] p').append(' | ' + user.get('username'));
+            });
           }); 
         }, 
         error: function(error){
