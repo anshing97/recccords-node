@@ -2,24 +2,10 @@ Parse.initialize("6Fj3b3fSBxz8k9mDWRHzl2uXmoSTqxleieQA4PL2", "wRXCwtc1earGjrgLfd
 
 $(document).ready(function() {
 
-  // find all records for this user 
-  var query = new Parse.Query('RecordActivity');
-
-  // looking for add to collection activity for this user
-  query.contains('activityType','addCollection');
-  query.equalTo('fromUser', Parse.User.current());  
-  query.descending('createdAt');
-
-  // include the record object
-  query.include('record');
-
-  var collection = query.collection(); 
-
-  collection.fetch({
-    success: function(activities) {
-      activities.each(function(activity){
-
-        var record = activity.get('record');
+  Parse.Cloud.run('userCollection',{'sort':'recordName'},{
+    success:function(records){
+      $.each(records,function(ii,record) {
+        var record = records[ii];
 
         var name   = record.get('recordName');
         var label  = record.get('recordLabel');
@@ -28,13 +14,12 @@ $(document).ready(function() {
         var thumb = record.get('recordThumb');
 
         $('#records').append('<li><a href="record/' + record.get('discogsId') + '"><img src="' + thumb + '"></a>' + name + ' | ' + artist + ' | ' + label + ' | ' + year + '</li>');
-
-      });
-
-    },
-    error: function(records, error) {
-      console.log("error");
+      });       
+    }, 
+    error:function(error){
+      console.log('error');
+      console.log(error);
     }
-
   });
 });
+

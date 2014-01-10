@@ -12,6 +12,27 @@ $(document).ready(function() {
 
     var data = results.data; 
 
+    // call cloud code for users that have this record in their collection 
+    Parse.Cloud.run('usersWithRecordInCollection', { 'discogsId': data.id }, {
+      success: function(users) {
+
+        if ( users.length > 0 ) {
+          $.each(users,function(ii,user) {
+            $('#people').append('<li>' +  user.get('username') + '</li>');
+          });
+        } else {
+          $('#social').hide();
+        }
+
+      },
+      error: function(error) {
+        console.log('error');
+        console.log(error);
+      }
+    });
+
+    // populate the view 
+
     // cover
     $('#cover').append('<img src="' +  data.images[0].resource_url  + '">');
 
@@ -27,24 +48,5 @@ $(document).ready(function() {
       var track = data.tracklist[ii];
       $tracks.append('<li>' + track.position + ' | ' + track.title + '| ' + track.duration + '</li>')
     }
-
-
-   Parse.Cloud.run('usersWithRecordInCollection', { 'discogsId': data.id }, {
-      success: function(users) {
-
-        if ( users.length > 0 ) {
-          for ( var ii = 0; ii < users.length; ii++ ) {
-            $('#people').append('<li>' +  users[ii].get('username') + '</li>');
-          }
-        } else {
-          $('#social').hide();
-        }
-
-      },
-      error: function(error) {
-        console.log('errror');
-        console.log(error);
-      }
-    });
   }); 
 });

@@ -13,43 +13,35 @@ $(document).ready(function() {
 
     // show the results 
     $.getJSON(query,function(data){
+
+      // create the list first 
       $.each(data.results,function(ii,result) {
- 
-        var findUsersWithRecords = function ( result ) {
-
-          // find the record
-          var recordQuery = new Parse.Query('Record');
-          recordQuery.equalTo('discogsId',result.id);
-
-          // find who has it 
-          var addedToCollectionQuery = new Parse.Query('RecordActivity');
-          addedToCollectionQuery.equalTo('activityType','addCollection');
-          addedToCollectionQuery.matchesQuery('record',recordQuery);
-          addedToCollectionQuery.include('fromUser');
-
-          // append user that has this record in their collection
-          addedToCollectionQuery.find({
-            success:function(results){
-              for ( var ii = 0; ii < results.length; ii++ ) {
-                var user = results[ii].get('fromUser');
-                $('li[data-id="' + result.id + '"] p').append(' | ' + user.get('username'));
-              }
-            },
-            error:function(error){
-              console.log('error');
-              console.log(error);
-            }
-          });
-        };
-
         $('#results').append('<li data-id=' +  result.id + '><a href="record/' + result.id + '"><img src="' + result.thumb + '"></a><p>' + result.title + ' | ' + result.year +  ' <a href="#" class="addCollection" data-resource="' + result.resource_url + '">Add to Collection</a></p></li>');
-
-        findUsersWithRecords(result);
-
       });
-    })
+
+
+      // fetch user colleciton records for each record
+      var recordsList = $.map(data.results,function(result) {
+        return {'discogsId':result.id }; 
+      });
+
+      Parse.Cloud.run('usersWithRecordInCollectionList',{ 'records':recordsList },{
+        success:function(users){
+          $.each(users,function(ii,user) {
+            $('li[data-id="' + recordsList[ii].discogsId + '"] p').append(' | ' + user.get('username'));
+          }); 
+        }, 
+        error: function(error){
+          console.log('error');
+          console.log(error);
+        }
+      });
+
+
+    });
 
     e.preventDefault(); 
+
   });
 
   $('#results').on('click','a.addCollection',function(e){
@@ -74,7 +66,7 @@ $(document).ready(function() {
           console.log(result);
         },
         error: function(error) {
-          console.log('errror');
+          console.log('error');
           console.log(error);
         }
       });
