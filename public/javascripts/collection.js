@@ -1,29 +1,27 @@
 Parse.initialize("6Fj3b3fSBxz8k9mDWRHzl2uXmoSTqxleieQA4PL2", "wRXCwtc1earGjrgLfdJk9dVwilt0udunXMB3BbcE");
 
 function getCollection(successCB,failCB){
-  // find all records for this user 
-  var query = new Parse.Query('Record');
-  query.equalTo("user", Parse.User.current());
 
-  var collection = query.collection(); 
+  Parse.Cloud.run('userCollection',{'sort':'recordName'},{
+    success:function(records){
 
-  collection.fetch({
-    success: function(records) {
-    	var rcrds = new Array();
-     records.each(function(record){
-		var rcrd = new Object();
-		rcrd.recordName = record.get('recordName');
-        rcrd.recordLabel = record.get('recordLabel');
-        rcrd.recordArtist = record.get('recordArtist');
-        rcrd.recordYear = record.get('recordYear');
-		rcrds.push(rcrd);
-      });
-    	successCB(rcrds);
-    },
-    error: function(records, error) {
-      var result = new Object();
-      result.error = "error";
-      failCB(result);
+      var collection = $.map(records,function(ii,record) {
+
+        var obj = new Object();
+        obj.recordName = record.get('recordName');
+        obj.recordLabel = record.get('recordLabel');
+        obj.recordArtist = record.get('recordArtist');
+        obj.recordYear = record.get('recordYear');
+        obj.recordThumb = record.get('recordThumb');
+        
+        return obj; 
+
+      });       
+
+      successCB(collection);      
+    }, 
+    error:function(error){
+      failCB(error);
     }
   });
 };
