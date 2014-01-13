@@ -5,7 +5,7 @@ function getCollection(successCB,failCB){
   Parse.Cloud.run('userCollection',{'sort':'recordName'},{
     success:function(records){
 
-      var collection = $.map(records,function(ii,record) {
+      var collection = $.map(records,function(record) {
 
         var obj = new Object();
         obj.recordName = record.get('recordName');

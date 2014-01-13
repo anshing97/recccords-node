@@ -5,7 +5,7 @@ function getFeed(successCB,failCB){
   Parse.Cloud.run('userFeed',{},{
     success:function(activities){
 
-      var feed = $.map(activities,function(ii,activity) {
+      var feed = $.map(activities,function(activity) {
 
         // record information 
         var record = activity.get('record');  
