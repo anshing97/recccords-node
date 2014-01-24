@@ -1,1 +1,56 @@
-{"id":"de9ffe84-06f6-4814-b826-0395487660e5","js":[{"path":"app.js","update":"delta","version":"4875a89c67f126571a4bdfb47b39d894b7e2c1e0"}],"css":[{"path":"theme/cupertino-03df44a8-85d6-42e9-81b5-c584bed63ce1.css","update":"delta","theme":"Cupertino","version":"727f0ca728a0195e4daa258ae9ba53e8d5855c67","platform":["phone","tablet","desktop"]},{"path":"records.css","version":"58e15fbadaab20a0dcf1dd5b3a52f5bbb7ef2313"}]}
+{
+   "name": "Recccords",
+   "indexHtmlPath": "index.html",
+   "url": null,
+   "js": [
+      {
+         "path": "touch/sencha-touch.js",
+         "x-bootstrap": true
+      },
+      {
+         "path": "bootstrap.js",
+         "x-bootstrap": true
+      },
+      {
+         "path": "app.js",
+         "bundle": true,
+         "update": "delta"
+      }
+   ],
+   "css": [
+      {
+         "update": "delta",
+         "platform": [
+            "phone",
+            "tablet",
+            "desktop"
+         ],
+         "theme": "Cupertino",
+         "path": "theme/cupertino-03df44a8-85d6-42e9-81b5-c584bed63ce1.css",
+         "_architect_active_theme": true
+      },
+      {
+         "path": "records.css"
+      }
+   ],
+   "appCache": {
+      "cache": [
+         "index.html"
+      ],
+      "network": [
+         "*"
+      ],
+      "fallback": []
+   },
+   "resources": [
+      "resources/images",
+      "resources/icons",
+      "resources/startup"
+   ],
+   "ignore": [
+      ".svn$"
+   ],
+   "archivePath": "archive",
+   "requires": [],
+   "id": "de9ffe84-06f6-4814-b826-0395487660e5"
+}

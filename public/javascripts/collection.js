@@ -13,7 +13,7 @@ function getCollection(successCB,failCB){
         obj.recordArtist = record.get('recordArtist');
         obj.recordYear = record.get('recordYear');
         obj.recordThumb = record.get('recordThumb');
-        
+        obj.discogsId = record.get('discogsId');
         return obj; 
 
       });       
