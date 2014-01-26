@@ -27,11 +27,6 @@ Ext.define('Recccords.view.DetailContainer', {
         items: [
             {
                 xtype: 'container',
-                html: 'Detail Container!',
-                id: 'detailTitle'
-            },
-            {
-                xtype: 'container',
                 id: 'detailImageContainer',
                 items: [
                     {
@@ -40,8 +35,78 @@ Ext.define('Recccords.view.DetailContainer', {
                         id: 'detailImage'
                     }
                 ]
+            },
+            {
+                xtype: 'container',
+                height: 31,
+                html: 'Album Title',
+                id: 'detailTitle',
+                margin: '0 10',
+                width: 315
+            },
+            {
+                xtype: 'container',
+                height: 28,
+                html: 'Artist Name',
+                id: 'detailArtist',
+                margin: '0 10 '
+            },
+            {
+                xtype: 'container',
+                html: 'Label Year US 123456',
+                id: 'detailRecord',
+                margin: '0 10',
+                padding: '0 0 10 0'
+            },
+            {
+                xtype: 'container',
+                html: 'Track list',
+                id: 'detailTracks',
+                margin: '10 10 '
+            }
+        ],
+        listeners: [
+            {
+                fn: 'onDetailContainerActivate',
+                event: 'activate'
             }
         ]
+    },
+
+    onDetailContainerActivate: function(newActiveItem, container, oldActiveItem, eOpts) {
+        var me = this;
+
+        // log the data
+        console.log("DetailContainer: Activate!");
+        console.log(newActiveItem._data);
+
+        // get the data and the view
+        var data = newActiveItem._data.discogsData;
+
+        // set the views
+        var detailImage = me.down("#detailImageContainer").down("#detailImage");
+        detailImage.setSrc(data.images[0].uri150);
+
+        var detailTitle = me.down("#detailTitle");
+        detailTitle.setHtml(data.title);
+
+        var detailArtist = me.down("#detailArtist");
+        detailArtist.setHtml(data.artists[0].name);
+
+        var detailRecord = me.down("#detailRecord");
+        detailRecord.setHtml(data.labels[0].name + ' ' +  data.year + ' ' + data.country + ' ' + data.labels[0].catno);
+
+        // create the tracks list
+        var tracksHTML = "";
+        for ( var ii = 0; ii < data.tracklist.length; ii++ ) {
+          var thisTrack = data.tracklist[ii];
+          console.log(thisTrack);
+          tracksHTML += "<div><span class='detailTracks-position'>" + thisTrack.position + "</span><span class='detailTracks-title'>" + thisTrack.title + "</span><span class='detailTracks-duration'>" + thisTrack.duration + "</span></div>";
+        }
+
+        var detailTracks = me.down("#detailTracks");
+        detailTracks.setHtml(tracksHTML);
+
     }
 
 });

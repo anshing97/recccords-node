@@ -31,7 +31,8 @@ Ext.application({
         'User',
         'Collection',
         'CollectionItem',
-        'DetailItem'
+        'DetailItem',
+        'RecordDetail'
     ],
     stores: [
         'ReleaseStore'

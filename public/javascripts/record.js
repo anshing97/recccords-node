@@ -11,7 +11,7 @@ function getRecordFromDiscogs(discogsId,successCB){
 
 function getUsersWithRecord(discogsId,successCB,failCB){
 
-  Parse.Cloud.run('usersWithRecordInCollection', { 'discogsId': data.id }, {
+  Parse.Cloud.run('usersWithRecordInCollection', { 'discogsId': discogsId }, {
     success: function(users) {
       successCB(users);
     },
@@ -19,4 +19,39 @@ function getUsersWithRecord(discogsId,successCB,failCB){
       failCB(error);
     }
   });
+};
+
+function getRecordDiscogsAndUserData(discogsId,successCB,failedCB) {
+
+  // get promise from getJson 
+  var discogsPromise = $.getJSON('http://api.discogs.com/releases/' + discogsId + '?callback=?');
+
+  // wrap this in a jquery promise
+  function callParseForUserData ( discogsId ) {
+
+    var deferred = new $.Deferred(); 
+
+    Parse.Cloud.run('usersWithRecordInCollection', { 'discogsId': discogsId }, {
+      success: function(users) {
+        deferred.resolve(users);
+      },
+      error: function(error) {
+        deferred.reject(error);
+      }
+    });
+
+    return deferred.promise(); 
+  };
+
+  var parsePromise = callParseForUserData(discogsId);
+
+  // make sure both returns 
+  $.when(discogsPromise,parsePromise).done(function(discogsResult,parseResult){
+    // why do we need to use 0 for discogsResults? 
+    // http://stackoverflow.com/questions/14878681/multiple-getjson-requests-return-differrently-within-promise    
+    successCB({discogsData:discogsResult[0].data,users:parseResult});
+  }).fail(function(){
+    failedCB('Call Failed');
+  });
+
 };

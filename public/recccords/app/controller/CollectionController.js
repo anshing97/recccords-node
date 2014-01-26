@@ -35,31 +35,27 @@ Ext.define('Recccords.controller.CollectionController', {
         console.log("dataviewitemtap" + target._record.data.discogsId);
 
         var me = this;
-        successCB = function(result) {
-            console.log("detailcallback " + result);
-            detailView = Ext.create('Recccords.view.DetailContainer', {
-            });
+        successCB = function(results) {
+            console.log("detailcallback");
+            console.log(results);
 
-            var detailStore = Ext.data.Store({
-            model: 'Recccords.model.DetailItem',
-            data: result
-            }) ;
-            var detailTitle = detailView.down("#detailTitle");
-            detailTitle.setHtml(result.data.title);
-            var detailImage = detailView.down("#detailImageContainer").down("#detailImage");
-            detailImage.setSrc(result.data.images[0].resource_url);
+            // create and set the data
+            var detailContainer = Ext.create('Recccords.view.DetailContainer', {});
+            detailContainer.setData(results);
 
             var viewport = me.getViewport();
-            var main = viewport.down('#mainViewContainer');
-            //viewport.removeAll(true,false);
-            viewport.add(detailView);
+            viewport.add(detailContainer);
+
+            // this will trigger activate on DetaiLContainer ad DetailContainerController
+            Ext.Viewport.setActiveItem(detailContainer);
+
 
         };
         failCB = function(result){
             console.log("getCOllection failed error : "+result.error);
         };
         me.successCB = successCB;
-        getRecordFromDiscogs(target._record.data.discogsId,me.successCB);
+        getRecordDiscogsAndUserData(target._record.data.discogsId,me.successCB);
     }
 
 });

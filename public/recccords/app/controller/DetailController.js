@@ -29,7 +29,9 @@ Ext.define('Recccords.controller.DetailController', {
     },
 
     onDetailContainerActivate: function(newActiveItem, container, oldActiveItem, eOpts) {
-        console.log("detailcontainer activate");
+
+        // log the data
+        console.log("DetailContainerController: Activate!");
 
     }
 
