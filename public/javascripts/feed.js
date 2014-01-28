@@ -18,7 +18,8 @@ function getFeed(successCB,failCB){
         obj.recordThumb = record.get('recordThumb');
 
         // how long ago this was collected
-        obj.timeAgo = moment(activity.createdAt).fromNow()
+        obj.timeAgo = moment(activity.createdAt).fromNow();
+        var user = activity.get('fromUser');
         obj.username = ( user.id === Parse.User.current().id ? 'You' : user.get('username') );
 
         return obj;
