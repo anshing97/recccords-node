@@ -42,4 +42,45 @@ function saveToCollection(dataObj,successCB,failCB){
     });
 }
 
+function saveToCollectionWithDiscogsData(results,successCB,failCB){
+  var data = {
+    'discogsId': results.id,
+    'resource_url': results.resource_url,
+    'thumb': results.thumb, 
+    'title': results.title,
+    'label': results.labels[0].name,  
+    'artist': results.artists[0].name,  
+    'year': results.year
+  };
+
+  Parse.Cloud.run('addRecordToCollection', data, {
+    success: function(result) {
+      successCB(result);
+    },
+    error: function(error) {
+      failCB(error);
+    }
+  });
+}
+
+function saveToWantsWithDiscogsData(results,successCB,failCB){
+  var data = {
+    'discogsId': results.id,
+    'resource_url': results.resource_url,
+    'thumb': results.thumb, 
+    'title': results.title,
+    'label': results.labels[0].name,  
+    'artist': results.artists[0].name,  
+    'year': results.year
+  };
+
+  Parse.Cloud.run('addRecordToWants', data, {
+    success: function(result) {
+      successCB(result);
+    },
+    error: function(error) {
+      failCB(error);
+    }
+  });
+}
   
