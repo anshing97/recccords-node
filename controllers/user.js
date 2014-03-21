@@ -15,8 +15,15 @@ module.exports = function(){
 
   // get login info 
   app.post('/login', function(req, res) {
-    console.log('post: login: setting ' + req.body.userid);
+
+    // save the needed information     
     req.session.userid = req.body.userid; 
+
+    if ( req.body.discogsToken && req.body.discogsSecret ) {
+      req.session.oauthAccessToken = req.body.discogsToken;
+      req.session.oauthAccessTokenSecret = req.body.discogsSecret;
+    }
+
     res.send('success');
   });
 
@@ -24,6 +31,8 @@ module.exports = function(){
   app.post('/logout', function(req, res) {
     console.log('post: logout: clearing ' + req.session.userid);
     req.session.userid = null; 
+    req.session.oauthAccessToken = null; 
+    req.session.oauthAccessTokenSecret = null;     
     res.send('success');
   });
 

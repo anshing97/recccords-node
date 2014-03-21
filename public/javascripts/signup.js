@@ -1,11 +1,9 @@
 Parse.initialize('6Fj3b3fSBxz8k9mDWRHzl2uXmoSTqxleieQA4PL2','wRXCwtc1earGjrgLfdJk9dVwilt0udunXMB3BbcE');
 
 parseSignUp = function(uname,password,email,objectCreatedCB, objectCreatedErrorCB){
-    // log user in 
-    console.log("signup username " + uname + " " + password);
-    Parse.User.signUp(uname,password, {
-      email: email
-    }, { success: function(user) {
+
+    Parse.User.signUp(uname,password, { email: email }, { 
+      success: function(user) {
         $.post('/login',{userid: user.id},function(data){
           if ( data === "success" ) {
             window.location = '/recccords/';
