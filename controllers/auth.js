@@ -97,7 +97,13 @@ module.exports = function(){
     var file_name = path.basename(req.body.image_url);
     var options = discogs_request_options(req,req.body.image_url);
 
-    request.get(options).pipe(fs.createWriteStream(file_name));
+    var writeStream = fs.createWriteStream('public/images/'+ file_name);
+    request.get(options).pipe(writeStream);
+
+    writeStream.on('finish',function(){
+      // send back response of file's new location 
+      res.send('images/' + file_name);
+    })
 
   });
 

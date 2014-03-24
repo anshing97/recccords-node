@@ -7,7 +7,25 @@ function searchDiscogs(releaseName,callback){
 
   // show the results 
   $.getJSON(query,function(data){
-  	callback(data);
+
+
+    // create the list first 
+    var promises = $.map(data.results,function(result,ii) {
+
+      var orig_thumb = result.thumb; 
+
+      var filename = result.thumb.substring(result.thumb.lastIndexOf('/')+1);
+      result.thumb = '/images/' + filename; 
+
+      return parseCacheImage(orig_thumb); 
+    });
+
+    // when working with arrays, need to use apply 
+    $.when.apply($,promises).done( function(){
+      console.log(arguments);
+      callback(data);
+    });
+
   });
 
 };
@@ -86,12 +104,7 @@ function saveToWantsWithDiscogsData(results,successCB,failCB){
 };
 
 function parseCacheImage(url) {
-
-
-  $.post('auth/save_image',{image_url:url},function(data){
-    console.log('image -----------------------')
-    console.log(data);
-  });
+  return $.post('/auth/save_image',{image_url:url}); 
 };
   
 /* node app */ 
@@ -107,12 +120,9 @@ $(document).ready(function() {
     var releaseName = $('input[name="search"]').val();
 
     searchDiscogs(releaseName, function (data) {
+
       // create the list first 
       $.each(data.results,function(ii,result) {
-
-
-        parseCacheImage(result.thumb);
-
         $('#results').append('<li data-id=' +  result.id + '><a href="record/' + result.id + '"><img src="' + result.thumb + '"></a><p>' + result.title + ' | ' + result.year +  ' <a href="#" class="addCollection" data-resource="' + result.resource_url + '">Add to Collection</a></p></li>');
       });
     });
