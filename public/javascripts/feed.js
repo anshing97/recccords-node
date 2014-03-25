@@ -15,7 +15,7 @@ function getFeed(successCB,failCB){
         obj.recordLabel = record.get('recordLabel');
         obj.recordArtist = record.get('recordArtist');
         obj.recordYear = record.get('recordYear');
-        obj.recordThumb = record.get('recordThumb');
+        obj.recordThumb = record.get('awsThumb');
 
         // how long ago this was collected
         obj.timeAgo = moment(activity.createdAt).fromNow();

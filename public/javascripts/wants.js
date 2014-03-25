@@ -11,7 +11,7 @@ function getWants(successCB,failCB){
         rcrd.recordLabel = record.get('recordLabel');
         rcrd.recordArtist = record.get('recordArtist');
         rcrd.recordYear = record.get('recordYear');
-        rcrd.recordThumb = record.get('recordThumb');
+        rcrd.recordThumb = record.get('awsThumb');
         rcrds.push(rcrd);
       });
       successCB(rcrds);

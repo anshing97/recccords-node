@@ -24,8 +24,6 @@ function getUsersWithRecord(discogsId,successCB,failCB){
 
 function getRecordDiscogsAndUserData(discogsId,successCB,failedCB) {
 
-  // get promise from getJson 
-  var discogsPromise = $.getJSON('http://api.discogs.com/releases/' + discogsId + '?callback=?');
 
   // wrap this in a jquery promise
   function callParseForUserWithRecord ( discogsId ) {
@@ -61,14 +59,30 @@ function getRecordDiscogsAndUserData(discogsId,successCB,failedCB) {
     return deferred.promise(); 
   };
 
+  // get promise from getJson 
+  var discogsPromise = $.getJSON('http://api.discogs.com/releases/' + discogsId + '?callback=?');
   var collectionPromise = callParseForUserWithRecord(discogsId);
   var userStatusPromise = callParseForUserRecordStatus(discogsId);
 
-  // make sure both returns 
+  // make sure everything returns 
   $.when(discogsPromise,collectionPromise,userStatusPromise).done(function(discogsResult,collectionResult,userStatusResult){
-    // why do we need to use 0 for discogsResults? 
-    // http://stackoverflow.com/questions/14878681/multiple-getjson-requests-return-differrently-within-promise    
-    successCB({discogsData:discogsResult[0].data,friends:collectionResult,status:userStatusResult});
+
+    // Ben: for now just deal with the 150 image
+    var discogsImageURL = discogsResult[0].data.images[0].uri150; 
+
+    var cacheImagePromise = parseCacheImage(discogsImageURL);
+
+    cacheImagePromise.done(function(local_image_url){
+
+      // BEN:  will need to change this to something better later 
+      discogsResult[0].data.images[0].uri150 = local_image_url;
+
+      // why do we need to use 0 for discogsResults? 
+      // http://stackoverflow.com/questions/14878681/multiple-getjson-requests-return-differrently-within-promise    
+      successCB({discogsData:discogsResult[0].data,friends:collectionResult,status:userStatusResult});
+
+    })
+
   }).fail(function(){
     failedCB('Call Failed');
   });

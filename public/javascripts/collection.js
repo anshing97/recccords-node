@@ -12,7 +12,7 @@ function getCollection(successCB,failCB){
         obj.recordLabel = record.get('recordLabel');
         obj.recordArtist = record.get('recordArtist');
         obj.recordYear = record.get('recordYear');
-        obj.recordThumb = record.get('recordThumb');
+        obj.recordThumb = record.get('awsThumb');
         obj.discogsId = record.get('discogsId');
         return obj; 
 
@@ -27,8 +27,33 @@ function getCollection(successCB,failCB){
 };
 
 
+// DANGER // 
+function updateRecordsAWS () {
+
+  var recordQuery = new Parse.Query('Record');
+
+  recordQuery.find({
+    success: function(results) {
+      $.each(results,function(ii,disc){
+
+        var image_url = disc.get('recordThumb');
+
+        $.post('/auth/aws_image',{image_url:image_url},function(aws_url){
+          disc.set('awsThumb',aws_url);
+          disc.save(); 
+        }); 
+      });      
+    }, 
+    error: function(error) {
+      console.log(error);
+    }
+  })
+};
+
+
 // for node app 
 $(document).ready(function() {
+
 
   getCollection(function(records){
     $.each(records,function(ii,record) {

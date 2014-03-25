@@ -25,6 +25,12 @@ module.exports = function(){
   var express = require('express');
   var app = express();
 
+  // aws 
+  var AWS = require('aws-sdk');
+  AWS.config.loadFromPath('./aws.json');
+  var s3 = new AWS.S3({params: {Bucket: 'recccords', ACL: 'public-read'}});; 
+
+
   app.get('/connect',function(req, res){
     oauth_consumer.getOAuthRequestToken(function(error, oauthToken, oauthTokenSecret, results){
       if (error) {
@@ -92,6 +98,7 @@ module.exports = function(){
 
   });
 
+  // save local image 
   app.post('/save_image',function(req, res) {
 
     var file_name = path.basename(req.body.image_url);
@@ -101,8 +108,40 @@ module.exports = function(){
     request.get(options).pipe(writeStream);
 
     writeStream.on('finish',function(){
+      
       // send back response of file's new location 
-      res.send('images/' + file_name);
+      res.send('/images/' + file_name);
+    })
+
+  });
+
+  // save image to aws 
+  app.post('/aws_image',function(req, res) {
+
+    var file_name = path.basename(req.body.image_url);
+    var options = discogs_request_options(req,req.body.image_url);
+
+    var writeStream = fs.createWriteStream('public/images/'+ file_name);
+    request.get(options).pipe(writeStream);
+
+    // wait till stream to finish before processing 
+    writeStream.on('finish',function(){
+
+      var fileData = fs.readFileSync('public/images/'+ file_name);
+
+      s3.putObject({
+        Key: 'covers/'+ file_name,
+        ContentType: 'image/jpg',
+        Body: fileData
+      }, function(err, resp) {
+        if(err){
+          console.log("error in s3 put object");
+          res.send('error');          
+        } else { 
+          res.send('https://s3.amazonaws.com/recccords/covers/' + file_name)
+        }
+      });
+
     })
 
   });

@@ -8,7 +8,6 @@ function searchDiscogs(releaseName,callback){
   // show the results 
   $.getJSON(query,function(data){
 
-
     // create the list first 
     var promises = $.map(data.results,function(result,ii) {
 
@@ -46,17 +45,23 @@ function saveToCollection(dataObj,successCB,failCB){
       'year': results.year
     };
 
-    Parse.Cloud.run('addRecordToCollection', data, {
-      success: function(result) {
-        console.log('success');
-        console.log(result);
-        successCB();
-      },
-      error: function(error) {
-        console.log('error');
-        console.log(error);
-        failCB();
-      }
+    $.post('/auth/aws_image',{image_url:data.thumb},function(aws_url){
+
+      // save the aws url into data 
+      data.awsThumb = aws_url;
+ 
+      Parse.Cloud.run('addRecordToCollection', data, {
+        success: function(result) {
+          console.log('success');
+          console.log(result);
+          successCB();
+        },
+        error: function(error) {
+          console.log('error');
+          console.log(error);
+          failCB();
+        }
+      });
     });
   });
 };
@@ -72,13 +77,19 @@ function saveToCollectionWithDiscogsData(results,successCB,failCB){
     'year': results.year
   };
 
-  Parse.Cloud.run('addRecordToCollection', data, {
-    success: function(result) {
-      successCB(result);
-    },
-    error: function(error) {
-      failCB(error);
-    }
+  $.post('/auth/aws_image',{image_url:data.thumb},function(aws_url){
+
+    // save the aws url into data 
+    data.awsThumb = aws_url;
+
+    Parse.Cloud.run('addRecordToCollection', data, {
+      success: function(result) {
+        successCB(result);
+      },
+      error: function(error) {
+        failCB(error);
+      }
+    });
   });
 };
 
@@ -93,13 +104,19 @@ function saveToWantsWithDiscogsData(results,successCB,failCB){
     'year': results.year
   };
 
-  Parse.Cloud.run('addRecordToWants', data, {
-    success: function(result) {
-      successCB(result);
-    },
-    error: function(error) {
-      failCB(error);
-    }
+  $.post('/auth/aws_image',{image_url:data.thumb},function(aws_url){
+
+    // save the aws url into data 
+    data.awsThumb = aws_url;
+
+    Parse.Cloud.run('addRecordToWants', data, {
+      success: function(result) {
+        successCB(result);
+      },
+      error: function(error) {
+        failCB(error);
+      }
+    });
   });
 };
 
@@ -128,4 +145,12 @@ $(document).ready(function() {
     });
 
   });  
+
+  $('#results').on('click','a.addCollection',function(e){
+
+    var resource_url = $(this).data('resource');
+
+    saveToCollection({'resource_url':resource_url},function(){console.log('success'),function(){console.log('error')}});
+
+  });
 });
