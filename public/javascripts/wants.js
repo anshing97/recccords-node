@@ -4,17 +4,21 @@ function getWants(successCB,failCB){
 
   Parse.Cloud.run('userWants',{'sort':'recordName'},{
     success:function(records){
-      var rcrds = new Array();
-      records.each(function(record){
-        var rcrd = new Object();
-        rcrd.recordName = record.get('recordName');
-        rcrd.recordLabel = record.get('recordLabel');
-        rcrd.recordArtist = record.get('recordArtist');
-        rcrd.recordYear = record.get('recordYear');
-        rcrd.recordThumb = record.get('awsThumb');
-        rcrds.push(rcrd);
-      });
-      successCB(rcrds);
+
+      var collection = $.map(records,function(record) {
+
+        var obj = new Object();
+        obj.recordName = record.get('recordName');
+        obj.recordLabel = record.get('recordLabel');
+        obj.recordArtist = record.get('recordArtist');
+        obj.recordYear = record.get('recordYear');
+        obj.recordThumb = record.get('awsThumb');
+        obj.discogsId = record.get('discogsId');
+        return obj; 
+
+      });       
+      
+      successCB(collection);
     },
     error:function(error){
       var result = new Object();
