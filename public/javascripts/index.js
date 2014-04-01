@@ -23,7 +23,9 @@ function parseLogOut (){
 
 function parseUserNeedsToken () {
 
-  var user = Parse.User.current(); 
+  var user = Parse.User.current();
+
+  if ( !user ) return false; 
 
   return !( user.get('discogsToken') || user.get('discogsSecret') ); 
 

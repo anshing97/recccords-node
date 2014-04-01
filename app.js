@@ -16,9 +16,8 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.bodyParser());
 app.use(express.methodOverride());
-app.use(express.cookieParser('RECCCORDS'));
-app.use(express.session());
-// app.use(expressLayouts);
+app.use(express.cookieParser());
+app.use(express.session({secret: '12345RECCCORDS12345'}));
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 

@@ -3,6 +3,7 @@ module.exports = function(){
   var CONSUMER_KEY = 'BCvgSeawxoZCPYqThnPV';
   var CONSUMER_SECRET = 'FxEPTHDkhtqGoZGHhrQDojwgyPIEhLGm';
   var USER_AGENT = 'Recccords/0.1 +http://www.recccords.com';
+  var CALLBACK_URL = process.env.OAUTH_CALLBACK || "http://192.168.1.8:3000/auth/callback";
 
   // oauth module  
   var oauth = require('oauth');
@@ -12,7 +13,7 @@ module.exports = function(){
     CONSUMER_KEY,
     CONSUMER_SECRET,
     "1.0",
-    "http://localhost:3000/auth/callback",
+    CALLBACK_URL,
     "HMAC-SHA1"
   );
 
@@ -36,6 +37,7 @@ module.exports = function(){
       if (error) {
         res.send("Error getting OAuth request token : " + util.inspect(error), 500);
       } else {  
+
         req.session.oauth = {};
         req.session.oauth.token = oauthToken;
         req.session.oauth.tokenSecret = oauthTokenSecret;
@@ -48,7 +50,7 @@ module.exports = function(){
     });
   });
 
-  app.get('/callback',function(req, res){
+  app.get('/callback',function(req, res) {    
     util.puts("<< " + req.session.oauth.token);
     util.puts("<< " + req.session.oauth.tokenSecret);
     util.puts("<< " + req.query.oauth_verifier);
@@ -60,7 +62,8 @@ module.exports = function(){
         req.session.oauthAccessTokenSecret = oauthAccessTokenSecret;
         console.log("token  is: " + req.session.oauthAccessToken );
         console.log("secret is: " + req.session.oauthAccessTokenSecret );
-        res.redirect('/');
+        // res.redirect('/');
+        res.redirect('/recccords')
       }
     });
   });
