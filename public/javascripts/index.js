@@ -18,6 +18,7 @@ function getParseUser (){
 function parseLogOut (){  
 	Parse.User.logOut();
   $.post('/logout');
+  location.reload();
 };
 
 function parseUserNeedsToken () {
