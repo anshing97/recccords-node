@@ -5,6 +5,8 @@ module.exports = function(){
   var USER_AGENT = 'Recccords/0.1 +http://www.recccords.com';
   var CALLBACK_URL = process.env.OAUTH_CALLBACK || "http://192.168.1.8:3000/auth/callback";
 
+  console.log("OAUTH_CALLBACK : " + CALLBACK_URL);
+
   // oauth module  
   var oauth = require('oauth');
   var oauth_consumer = new oauth.OAuth(
