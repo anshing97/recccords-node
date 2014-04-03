@@ -1,30 +1,48 @@
 Parse.initialize("6Fj3b3fSBxz8k9mDWRHzl2uXmoSTqxleieQA4PL2", "wRXCwtc1earGjrgLfdJk9dVwilt0udunXMB3BbcE");
 
+var discogsRequest; 
+var localizeRequest; 
+
 function searchDiscogs(releaseName,callback){
+
+  if (discogsRequest) { console.log("aborting discogs"); discogsRequest.abort(); }
+  if (localizeRequest) { console.log("aborting localize"); localizeRequest.abort(); }
 
   // form query string
   var query = 'http://api.discogs.com/database/search?type=release&format=vinyl&q=' + encodeURIComponent(releaseName);
 
   // show the results 
-  $.getJSON(query,function(data){
+  discogsRequest = $.getJSON(query,function(data){
+ 
+    // make sure we have something to process
+    if ( data.results.length > 0 ) {
 
-    // create the list first 
-    var urls = $.map(data.results,function(result,ii) {
+      // create the list of urls 
+      var urls = $.map(data.results,function(result,ii) {
 
-      var orig_thumb = result.thumb; 
+        var orig_thumb = result.thumb; 
 
-      var filename = result.thumb.substring(result.thumb.lastIndexOf('/')+1);
-      result.thumb = '/images/' + filename; 
+        var filename = result.thumb.substring(result.thumb.lastIndexOf('/')+1);
+        result.thumb = '/images/' + filename; 
 
-      return orig_thumb;
+        return orig_thumb;
 
-    });
+      });
 
-    localizeImages(urls).done(function(){
-      console.log('Done with images');
-      console.log(arguments);
-      callback(data);
-    });
+      localizeRequest = localizeImages(urls).done(function(){
+        console.log('Done with images');
+
+        localizeRequest = null; 
+        discogsRequest = null; 
+
+        callback(data);
+      });
+
+    } else {
+
+      callback("No results");
+
+    }
 
   });
 
