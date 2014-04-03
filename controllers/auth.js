@@ -5,8 +5,6 @@ module.exports = function(){
   var USER_AGENT = 'Recccords/0.1 +http://www.recccords.com';
   var CALLBACK_URL = process.env.OAUTH_CALLBACK || "http://192.168.1.8:3000/auth/callback";
 
-  console.log("OAUTH_CALLBACK : " + CALLBACK_URL);
-
   // oauth module  
   var oauth = require('oauth');
   var oauth_consumer = new oauth.OAuth(
@@ -23,6 +21,7 @@ module.exports = function(){
   var fs = require('fs');
   var path = require('path');
   var request = require('request');
+  var _ = require('underscore');
 
   // connect to the app 
   var express = require('express');
@@ -103,39 +102,76 @@ module.exports = function(){
 
   });
 
-  // save local image 
-  app.post('/save_image',function(req, res) {
 
-    var file_name = path.basename(req.body.image_url);
-    var options = discogs_request_options(req,req.body.image_url);
+  // helper function 
+  var localize_image = function ( req, image_url, callback ) {
+    var file_name = path.basename(image_url);
+    var options = discogs_request_options(req,image_url);
 
     var writeStream = fs.createWriteStream('public/images/'+ file_name);
     request.get(options).pipe(writeStream);
 
     writeStream.on('finish',function(){
-      
       // send back response of file's new location 
-      res.send('/images/' + file_name);
-    })
+      callback('/images/' + file_name);
+    });
+  };
+
+  var callback = function ( res, url, address ) {
+
+    this.completeCount++; 
+    this.results[url] = address; 
+
+    if ( this.requestsCount === this.completeCount ) {
+      console.log(this.results);
+      res.send('done');
+    }
+  };
+
+
+
+  // save local image 
+  app.post('/localize_images',function(req, res) {
+
+    var urls = req.body.image_urls;
+
+    var image_results = {
+      completeCount: 0, 
+      requestsCount: urls.length, 
+      results: {},
+    };
+
+    _.each(req.body.image_urls,function(url){
+
+      localize_image(req,url,callback.bind(image_results,res,url));
+
+    });
+
+
+    // var file_name = path.basename(req.body.image_url);
+    // var options = discogs_request_options(req,req.body.image_url);
+
+    // var writeStream = fs.createWriteStream('public/images/'+ file_name);
+    // request.get(options).pipe(writeStream);
+
+    // writeStream.on('finish',function(){
+      
+    //   // send back response of file's new location 
+    //   res.send('/images/' + file_name);
+    // })
 
   });
 
   // save image to aws 
   app.post('/aws_image',function(req, res) {
 
-    var file_name = path.basename(req.body.image_url);
-    var options = discogs_request_options(req,req.body.image_url);
+    localize_image(req,req.body.image_url,function(local_url){
 
-    var writeStream = fs.createWriteStream('public/images/'+ file_name);
-    request.get(options).pipe(writeStream);
-
-    // wait till stream to finish before processing 
-    writeStream.on('finish',function(){
-
-      var fileData = fs.readFileSync('public/images/'+ file_name);
+      var fileName = path.basename(local_url);
+      var fileData = fs.readFileSync('public/'+ local_url);
 
       s3.putObject({
-        Key: 'covers/'+ file_name,
+        Key: 'covers/'+ fileName,
         ContentType: 'image/jpg',
         Body: fileData
       }, function(err, resp) {
@@ -143,12 +179,12 @@ module.exports = function(){
           console.log("error in s3 put object");
           res.send('error');          
         } else { 
-          res.send('https://s3.amazonaws.com/recccords/covers/' + file_name)
+          res.send('https://s3.amazonaws.com/recccords/covers/' + fileName)
         }
       });
 
-    })
 
+    });
   });
 
   return app; 

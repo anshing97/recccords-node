@@ -9,18 +9,19 @@ function searchDiscogs(releaseName,callback){
   $.getJSON(query,function(data){
 
     // create the list first 
-    var promises = $.map(data.results,function(result,ii) {
+    var urls = $.map(data.results,function(result,ii) {
 
       var orig_thumb = result.thumb; 
 
       var filename = result.thumb.substring(result.thumb.lastIndexOf('/')+1);
       result.thumb = '/images/' + filename; 
 
-      return parseCacheImage(orig_thumb); 
+      return orig_thumb;
+
     });
 
-    // when working with arrays, need to use apply 
-    $.when.apply($,promises).done( function(){
+    localizeImages(urls).done(function(){
+      console.log('Done with images');
       console.log(arguments);
       callback(data);
     });
@@ -120,8 +121,8 @@ function saveToWantsWithDiscogsData(results,successCB,failCB){
   });
 };
 
-function parseCacheImage(url) {
-  return $.post('/auth/save_image',{image_url:url}); 
+function localizeImages(urls) {
+  return $.post('/auth/localize_images',{image_urls:urls}); 
 };
   
 /* node app */ 
