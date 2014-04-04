@@ -36,61 +36,12 @@ function searchDiscogs(releaseName,callback){
 
 };
 
-function getSearchImages(urls,callback) {
-
-  console.log("callign get search images with :",urls);
+function getLocalImages(urls,callback) {
 
   $.get('/auth/localize_results',{image_urls:urls},function(results){
     callback(results);
   });
 };
-
-/* 
-function searchDiscogs(releaseName,callback){
-
-  if (discogsRequest) { console.log("aborting discogs"); discogsRequest.abort(); }
-  if (localizeRequest) { console.log("aborting localize"); localizeRequest.abort(); }
-
-  // form query string
-  var query = 'http://api.discogs.com/database/search?per_page=' + PER_PAGE_RESULTS + '&type=release&format=vinyl&q=' + encodeURIComponent(releaseName);
-
-  // show the results 
-  discogsRequest = $.getJSON(query,function(data){
- 
-    // make sure we have something to process
-    if ( data.results.length > 0 ) {
-
-      // create the list of urls 
-      var urls = $.map(data.results,function(result,ii) {
-
-        var orig_thumb = result.thumb; 
-
-        var filename = result.thumb.substring(result.thumb.lastIndexOf('/')+1);
-        result.thumb = '/images/' + filename; 
-
-        return orig_thumb;
-
-      });
-
-      localizeRequest = localizeImages(urls).done(function(){
-        console.log('Done with images');
-
-        localizeRequest = null; 
-        discogsRequest = null; 
-
-        callback(data);
-      });
-
-    } else {
-
-      callback("No results");
-
-    }
-
-  });
-
-};
-*/
 
 function saveToCollection(dataObj,successCB,failCB){
 

@@ -17,6 +17,7 @@ module.exports = function(){
     "HMAC-SHA1"
   );
 
+  // libraries we need
   var util = require('util');
   var fs = require('fs');
   var path = require('path');
@@ -37,7 +38,6 @@ module.exports = function(){
   AWS.config.loadFromPath('./aws.json');
   var s3 = new AWS.S3({params: {Bucket: 'recccords', ACL: 'public-read'}});; 
 
-
   app.get('/connect',function(req, res){
     oauth_consumer.getOAuthRequestToken(function(error, oauthToken, oauthTokenSecret, results){
       if (error) {
@@ -48,8 +48,8 @@ module.exports = function(){
         req.session.oauth.token = oauthToken;
         req.session.oauth.tokenSecret = oauthTokenSecret;
 
-        util.puts(">> " + req.session.oauth.token);
-        util.puts(">> " + req.session.oauth.tokenSecret);
+        // util.puts(">> " + req.session.oauth.token);
+        // util.puts(">> " + req.session.oauth.tokenSecret);
 
         res.redirect("http://www.discogs.com/oauth/authorize?oauth_token=" + req.session.oauth.token );      
       }
@@ -57,9 +57,11 @@ module.exports = function(){
   });
 
   app.get('/callback',function(req, res) {    
-    util.puts("<< " + req.session.oauth.token);
-    util.puts("<< " + req.session.oauth.tokenSecret);
-    util.puts("<< " + req.query.oauth_verifier);
+
+    // util.puts("<< " + req.session.oauth.token);
+    // util.puts("<< " + req.session.oauth.tokenSecret);
+    // util.puts("<< " + req.query.oauth_verifier);
+
     oauth_consumer.getOAuthAccessToken(req.session.oauth.token, req.session.oauth.tokenSecret, req.query.oauth_verifier, function(error, oauthAccessToken, oauthAccessTokenSecret, results) {
       if (error) {
         res.send("Error getting OAuth access token : " + util.inspect(error) + "["+oauthAccessToken+"]"+ "["+oauthAccessTokenSecret+"]"+ "["+util.inspect(results)+"]", 500);
@@ -107,36 +109,53 @@ module.exports = function(){
 
   });
 
-
+  // images stuff 
   // helper function 
+
   var localize_image = function ( req, image_url, callback ) {
+
     var file_name = path.basename(image_url);
+    var file_path = 'public/images/' + file_name;
+    var url_path  = '/images/' + file_name
+
+    // the oauth request 
     var options = discogs_request_options(req,image_url);
 
-    var writeStream = fs.createWriteStream('public/images/'+ file_name);
-    request.get(options).pipe(writeStream);
+    // check if we need to write it or if it already exists 
+    fs.exists(file_path, function(exists) {
 
-    writeStream.on('finish',function(){
-      // send back response of file's new location 
-      callback('/images/' + file_name);
+      if ( exists ) {
+        callback(url_path);
+      } else {
+        var writeStream = fs.createWriteStream(file_path);
+        request.get(options).pipe(writeStream);
+
+        writeStream.on('finish',function(){
+          // send back response of file's new location 
+          callback(url_path);
+        });
+      }
     });
   };
 
-  var callback = function ( res, index, address ) {
+  var localize_callback = function ( index, address ) {
 
     this.completeCount++; 
     this.results[index] = address; 
 
-    if ( this.requestsCount === this.completeCount ) {
-      console.log(this.results);
-      res.send(this.results);
-    }
+    // util.puts("localizeImageCallback: " + index + " -> " + address);
+    // if ( this.requestsCount === this.completeCount ) {
+    //   util.puts("localizeImageResults: Finished: " + util.inspect(this.results));
+    // }
+
   };
 
-  // helper data 
-  var localizeResults = {}
+  // helper data, keeps track of image_url to localized_url
+  var _localizeResults = {};
 
-  // save local image 
+  // routes 
+
+  // save local images
   app.post('/localize_images',function(req, res) {
 
     var urls = req.body.image_urls;
@@ -149,13 +168,17 @@ module.exports = function(){
 
     _.each(req.body.image_urls,function(url,index){
 
-      localize_image(req,url,callback.bind(image_results,res,index));
+      localize_image(req,url,localize_callback.bind(image_results,index));
 
-      // assign this 
+      // assign this to our database
       var key = req.body.image_urls.join(',')
-      localizeResults[key] = image_results; 
+      _localizeResults[key] = image_results; 
 
     });
+
+    // send accepted, working on it 
+    res.send({status:CODE_ACCEPTED});
+
   });
 
   // save local image 
@@ -163,7 +186,7 @@ module.exports = function(){
 
     var key = req.query.image_urls;
 
-    var thisRequest = localizeResults[key];
+    var thisRequest = _localizeResults[key];
 
     // by default, accepted but no response  
     var response = { status:CODE_ACCEPTED };
@@ -174,11 +197,21 @@ module.exports = function(){
     } else if ( thisRequest.completeCount === thisRequest.requestsCount ) {
       response['status'] = CODE_OK; 
       response['results'] = thisRequest.results; 
+
+      // util.puts("before:" + util.inspect(_localizeResults));
+
+      // no longer need this once we respond  
+      delete _localizeResults[key]
+
+      // util.puts("after:" + util.inspect(_localizeResults));
     } 
 
     res.send(response);
 
   });
+
+  // for aws 
+  var _awsResults = {};
 
   // save image to aws 
   app.post('/aws_image',function(req, res) {
@@ -194,7 +227,7 @@ module.exports = function(){
         Body: fileData
       }, function(err, resp) {
         if(err){
-          console.log("error in s3 put object");
+          util.puts("aws_image error saving image " + util.inspect(err));
           res.send('error');          
         } else { 
           res.send('https://s3.amazonaws.com/recccords/covers/' + fileName)
