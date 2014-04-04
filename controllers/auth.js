@@ -27,6 +27,11 @@ module.exports = function(){
   var express = require('express');
   var app = express();
 
+  // response codes
+  var CODE_OK = 200; 
+  var CODE_ACCEPTED = 202; 
+  var CODE_RESET_CONTENT = 205; 
+
   // aws 
   var AWS = require('aws-sdk');
   AWS.config.loadFromPath('./aws.json');
@@ -117,18 +122,19 @@ module.exports = function(){
     });
   };
 
-  var callback = function ( res, url, address ) {
+  var callback = function ( res, index, address ) {
 
     this.completeCount++; 
-    this.results[url] = address; 
+    this.results[index] = address; 
 
     if ( this.requestsCount === this.completeCount ) {
       console.log(this.results);
-      res.send('done');
+      res.send(this.results);
     }
   };
 
-
+  // helper data 
+  var localizeResults = {}
 
   // save local image 
   app.post('/localize_images',function(req, res) {
@@ -138,27 +144,39 @@ module.exports = function(){
     var image_results = {
       completeCount: 0, 
       requestsCount: urls.length, 
-      results: {},
+      results: [],
     };
 
-    _.each(req.body.image_urls,function(url){
+    _.each(req.body.image_urls,function(url,index){
 
-      localize_image(req,url,callback.bind(image_results,res,url));
+      localize_image(req,url,callback.bind(image_results,res,index));
+
+      // assign this 
+      var key = req.body.image_urls.join(',')
+      localizeResults[key] = image_results; 
 
     });
+  });
 
+  // save local image 
+  app.get('/localize_results',function(req, res) {
 
-    // var file_name = path.basename(req.body.image_url);
-    // var options = discogs_request_options(req,req.body.image_url);
+    var key = req.query.image_urls;
 
-    // var writeStream = fs.createWriteStream('public/images/'+ file_name);
-    // request.get(options).pipe(writeStream);
+    var thisRequest = localizeResults[key];
 
-    // writeStream.on('finish',function(){
-      
-    //   // send back response of file's new location 
-    //   res.send('/images/' + file_name);
-    // })
+    // by default, accepted but no response  
+    var response = { status:CODE_ACCEPTED };
+
+    // process request 
+    if ( ! thisRequest ) {
+      response['status'] = CODE_RESET_CONTENT; 
+    } else if ( thisRequest.completeCount === thisRequest.requestsCount ) {
+      response['status'] = CODE_OK; 
+      response['results'] = thisRequest.results; 
+    } 
+
+    res.send(response);
 
   });
 

@@ -1,15 +1,58 @@
 Parse.initialize("6Fj3b3fSBxz8k9mDWRHzl2uXmoSTqxleieQA4PL2", "wRXCwtc1earGjrgLfdJk9dVwilt0udunXMB3BbcE");
 
-var discogsRequest; 
-var localizeRequest; 
+var PER_PAGE_RESULTS = 10; 
 
+function searchDiscogs(releaseName,callback){
+
+  // form query string
+  var query = 'http://api.discogs.com/database/search?per_page=' + PER_PAGE_RESULTS + '&type=release&format=vinyl&q=' + encodeURIComponent(releaseName);
+
+  // show the results 
+  discogsRequest = $.getJSON(query,function(data){
+
+    // create the list of urls 
+    var urls = $.map(data.results,function(result,ii) {
+
+      var orig_thumb = result.thumb; 
+      result.thumb = 'https://s3.amazonaws.com/recccords/images/vinyl-placeholder.png'; 
+
+      return orig_thumb;
+
+    });
+
+    if ( urls.length > 0 ) {
+
+      // fire the data back with new results
+      callback(data,urls.length,urls);
+
+      // tell localize the images 
+      $.post('/auth/localize_images',{image_urls:urls}); 
+    } else {
+
+      callback('No results',0,{})
+    }
+
+  }); 
+
+};
+
+function getSearchImages(urls,callback) {
+
+  console.log("callign get search images with :",urls);
+
+  $.get('/auth/localize_results',{image_urls:urls},function(results){
+    callback(results);
+  });
+};
+
+/* 
 function searchDiscogs(releaseName,callback){
 
   if (discogsRequest) { console.log("aborting discogs"); discogsRequest.abort(); }
   if (localizeRequest) { console.log("aborting localize"); localizeRequest.abort(); }
 
   // form query string
-  var query = 'http://api.discogs.com/database/search?type=release&format=vinyl&q=' + encodeURIComponent(releaseName);
+  var query = 'http://api.discogs.com/database/search?per_page=' + PER_PAGE_RESULTS + '&type=release&format=vinyl&q=' + encodeURIComponent(releaseName);
 
   // show the results 
   discogsRequest = $.getJSON(query,function(data){
@@ -47,6 +90,7 @@ function searchDiscogs(releaseName,callback){
   });
 
 };
+*/
 
 function saveToCollection(dataObj,successCB,failCB){
 
