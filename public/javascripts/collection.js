@@ -52,23 +52,23 @@ function updateRecordsAWS () {
 
 
 // for node app 
-$(document).ready(function() {
+// $(document).ready(function() {
 
 
-  getCollection(function(records){
-    $.each(records,function(ii,record) {
+//   getCollection(function(records){
+//     $.each(records,function(ii,record) {
 
-      var name   = record.recordName;
-      var label  = record.recordLabel;
-      var artist = record.recordArtist;
-      var year = record.recordYear;
-      var thumb = record.recordThumb;
+//       var name   = record.recordName;
+//       var label  = record.recordLabel;
+//       var artist = record.recordArtist;
+//       var year = record.recordYear;
+//       var thumb = record.recordThumb;
 
-      $('#records').append('<li><a href="record/' + record.discogsId + '"><img src="' + thumb + '"></a>' + name + ' | ' + artist + ' | ' + label + ' | ' + year + '</li>');
-    });       
-  }, 
-  function (error){
-    console.log(error);
-  });
-});
+//       $('#records').append('<li><a href="record/' + record.discogsId + '"><img src="' + thumb + '"></a>' + name + ' | ' + artist + ' | ' + label + ' | ' + year + '</li>');
+//     });       
+//   }, 
+//   function (error){
+//     console.log(error);
+//   });
+// });
 

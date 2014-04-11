@@ -139,32 +139,32 @@ function localizeImages(urls) {
 };
   
 /* node app */ 
-$(document).ready(function() {
+// $(document).ready(function() {
 
-  $('#search').submit(function(e){
+//   $('#search').submit(function(e){
 
-    e.preventDefault(); 
+//     e.preventDefault(); 
 
-    // clear the results
-    $('#results').empty();
+//     // clear the results
+//     $('#results').empty();
 
-    var releaseName = $('input[name="search"]').val();
+//     var releaseName = $('input[name="search"]').val();
 
-    searchDiscogs(releaseName, function (data) {
+//     searchDiscogs(releaseName, function (data) {
 
-      // create the list first 
-      $.each(data.results,function(ii,result) {
-        $('#results').append('<li data-id=' +  result.id + '><a href="record/' + result.id + '"><img src="' + result.thumb + '"></a><p>' + result.title + ' | ' + result.year +  ' <a href="#" class="addCollection" data-resource="' + result.resource_url + '">Add to Collection</a></p></li>');
-      });
-    });
+//       // create the list first 
+//       $.each(data.results,function(ii,result) {
+//         $('#results').append('<li data-id=' +  result.id + '><a href="record/' + result.id + '"><img src="' + result.thumb + '"></a><p>' + result.title + ' | ' + result.year +  ' <a href="#" class="addCollection" data-resource="' + result.resource_url + '">Add to Collection</a></p></li>');
+//       });
+//     });
 
-  });  
+//   });  
 
-  $('#results').on('click','a.addCollection',function(e){
+//   $('#results').on('click','a.addCollection',function(e){
 
-    var resource_url = $(this).data('resource');
+//     var resource_url = $(this).data('resource');
 
-    saveToCollection({'resource_url':resource_url},function(){console.log('success'),function(){console.log('error')}});
+//     saveToCollection({'resource_url':resource_url},function(){console.log('success'),function(){console.log('error')}});
 
-  });
-});
+//   });
+// });

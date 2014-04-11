@@ -2,17 +2,7 @@ Parse.initialize("6Fj3b3fSBxz8k9mDWRHzl2uXmoSTqxleieQA4PL2", "wRXCwtc1earGjrgLfd
 
 // exposed function 
 function getParseUser (){
-
-  var user = Parse.User.current(); 
-
-  if ( user ) {
-    var post_data = { userid: user.id, 
-                      discogsToken: user.get('discogsToken'), 
-                      discogsSecret: user.get('discogsSecret') };
-    $.post('/login',post_data);
-  }
-
-  return user || null;
+  return Parse.User.current(); 
 };
 
 function parseLogOut (){  
@@ -21,70 +11,73 @@ function parseLogOut (){
   location.reload();
 };
 
-function parseUserNeedsToken () {
-
-  var user = Parse.User.current();
-
-  if ( !user ) return false; 
-
-  return !( user.get('discogsToken') || user.get('discogsSecret') ); 
-
-}
-
-function parseUserSaveAuthToken () {
+// assumes user is available 
+function parseCheckToken (callback) {
 
   var user = Parse.User.current(); 
 
-  if ( ! ( user.get('discogsToken') || user.get('discogsSecret') ) )  {
+  user.fetch().then(function(user_info){
 
-    $.get('/auth/credentials',function(data){
+    console.log("user info ");
 
-      if ( data.access_token && data.access_secret ) {
+    // check if the token and secret are there 
+    var token = user_info.get('discogsToken');
+    var secret = user_info.get('discogsSecret');
 
-        user.set('discogsToken',data.access_token);
-        user.set('discogsSecret',data.access_secret);
+    if ( token && secret ) {
 
-        user.save(null,{
-          success: function (user) {
-            console.log('save discogs token success');
-          },
-          error: function(user, error) {
-            console.log("error saving user " + error);
-          }
-        });
-      }
+      // if we have token, log us in
+      var login_data = { userid: user.id, 
+                         discogsToken: token, 
+                         discogsSecret: secret };
 
-    });
+      $.post('/auth/verify',login_data,function(response){  
 
-  } 
+        // whatever is in parse doesn't work so we need to clear it 
+        if ( response == true ) {
 
-}
+          // token is verified to work via identity 
 
+          callback(true);
 
-// for node app 
-$(document).ready(function() {
+        } else {
 
-  var user = getParseUser(); 
+          // token is not valid, clear what's on the database and redo the OAUTH process 
 
-  if ( user ) {  
-    $('.user').show();
-    $('.userless').hide(); 
-    $('#greeting').html('Hello ' + user.get('username') + ' ');    
-  } else {
-    $('.user').hide();
-    $('.userless').show(); 
-  }
+          user_info.unset('discogsToken');
+          user_info.unset('discogsSecret');
 
-  $('#logout').click(function(e){
-    parseLogOut(); 
-    window.location = '/';
-    e.preventDefault();
+          user_info.save().then(function(){
+            callback(false);
+          });
+        }
+
+      });
+
+    } else {
+
+      // check if we have credentials from oauth callback
+      $.get('/auth/credentials',function(response){
+
+        if ( response.access_token && response.access_secret ) {
+
+          user_info.set('discogsToken',response.access_token);
+          user_info.set('discogsSecret',response.access_secret);
+
+          // user is oauthed, but data is not on parse, so save it 
+          user_info.save().then(function(user){
+            callback(true);
+          });
+
+        } else {
+
+          // nothing from credential callback, lets go do oauth 
+          callback(false);
+        }
+
+      });
+    }
   });
 
-  if ( parseUserNeedsToken() ) {
-    parseUserSaveAuthToken(); 
-  } else {
-    $('.auth').html('- authenticated with discogs');
-  }
+};
 
-});

@@ -109,6 +109,38 @@ module.exports = function(){
 
   });
 
+  // save and verify auth info 
+  app.post('/verify', function(req, res) {
+
+    // save the needed information     
+    req.session.userid = req.body.userid; 
+    req.session.oauthAccessToken = req.body.discogsToken;
+    req.session.oauthAccessTokenSecret = req.body.discogsSecret;
+
+    // now create an identity query 
+    console.log("auth verify testing " + util.inspect(req.session));
+
+    var options = discogs_request_options(req,'http://api.discogs.com/oauth/identity');
+
+    request.get(options, function (e,r,body) {
+
+      var discogs_response = JSON.parse(body);
+
+      console.log("auth verify got " + util.inspect(discogs_response));
+
+      // if we have a username we got the data, else the token doesn't work 
+      if ( discogs_response.username ) {
+        res.send(true);
+      } else {
+        // clear the session if it didnt work
+        req.session.oauthAccessToken = null;
+        req.session.oauthAccessTokenSecret = null;
+
+        res.send(false);
+      }
+    }); 
+  });  
+
   // images stuff 
   // helper function 
 

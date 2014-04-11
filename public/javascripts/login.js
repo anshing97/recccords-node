@@ -20,22 +20,22 @@ parseLogin = function(username, password, objectCreatedCB, objectCreatedErrorCB)
 
 
 // for node app 
-$(document).ready(function(){
+// $(document).ready(function(){
 
-  // if not, show login page
-  $('#login').submit(function(e){
+//   // if not, show login page
+//   $('#login').submit(function(e){
 
-    // get the user name and password from the form 
-    var username = $(this).children('input[name="username"]').val(); 
-    var password = $(this).children('input[name="password"]').val(); 
+//     // get the user name and password from the form 
+//     var username = $(this).children('input[name="username"]').val(); 
+//     var password = $(this).children('input[name="password"]').val(); 
 
-    parseLogin(username,password,function(success){
-      window.location = '/';
-    },function(error){
-      console.log('invalid login');
-    });
+//     parseLogin(username,password,function(success){
+//       window.location = '/';
+//     },function(error){
+//       console.log('invalid login');
+//     });
 
-    e.preventDefault(); 
+//     e.preventDefault(); 
 
-  }); 
-});
+//   }); 
+// });
