@@ -1,6 +1,0 @@
-{
-    "webBuild": {
-        "environment": "production",
-        "publishPath": "/Users/bchao/Desktop/recccords/clientsideSencha/public/phonogram"
-    }
-}

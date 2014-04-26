@@ -1,6 +1,0 @@
-{
-    "releases": [
-    {"name": "Release1", "id": 0, "artistname": "artist1","photo_url":"img/photo1.jpeg","album name":"album1"},   
-     {"name": "Release2", "id": 1, "artistname": "artist2","photo_url":"img/photo2.jpeg","album name":"album2"}
-    ]
-}
