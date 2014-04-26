@@ -6,7 +6,7 @@ parseSignUp = function(uname,password,email,objectCreatedCB, objectCreatedErrorC
       success: function(user) {
         $.post('/login',{userid: user.id},function(data){
           if ( data === "success" ) {
-            window.location = '/recccords/';
+            window.location = '/phonogram/';
           }
         });
       },

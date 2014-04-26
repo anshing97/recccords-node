@@ -3,7 +3,7 @@ module.exports = function(){
   var CONSUMER_KEY = 'BCvgSeawxoZCPYqThnPV';
   var CONSUMER_SECRET = 'FxEPTHDkhtqGoZGHhrQDojwgyPIEhLGm';
   var USER_AGENT = 'Recccords/0.1 +http://www.recccords.com';
-  var CALLBACK_URL = process.env.OAUTH_CALLBACK || "http://192.168.1.8:3000/auth/callback";
+  var CALLBACK_URL = process.env.OAUTH_CALLBACK || "http://10.0.0.15:3000/auth/callback";
 
   // oauth module  
   var oauth = require('oauth');
@@ -71,7 +71,7 @@ module.exports = function(){
         console.log("token  is: " + req.session.oauthAccessToken );
         console.log("secret is: " + req.session.oauthAccessTokenSecret );
         // res.redirect('/');
-        res.redirect('/recccords')
+        res.redirect('/phonogram')
       }
     });
   });
